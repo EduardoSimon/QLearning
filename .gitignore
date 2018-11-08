@@ -23,7 +23,6 @@ ExportedObj/
 *.svd
 *.pdb
 *.opendb
-*.VC.db
 
 # Unity3D generated meta files
 *.pidb.meta
@@ -35,3 +34,12 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
+AI-Game/KSEditorLogs/sf_20181030.log
+AI-Game/KSEditorLogs/sf_20181030.log
+AI-Game/Assets/KinematicSoup/SceneFusion/Editor/SceneFusionConfig.asset
+AI-Game/KSEditorLogs/sf_20181030.log
+AI-Game/KSEditorLogs/sf_20181031.log
+
+AI-Game/KSEditorLogs/
+
+AI-Game/\.idea/\.idea\.AI-Game/\.idea/
