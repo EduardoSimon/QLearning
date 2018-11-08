@@ -18,9 +18,14 @@ public class AiBrain : MonoBehaviour
 	{
 		int randomCell = Random.Range(0, GameManager.I.Cells.Length);
 
-		while (GameManager.I.Cells[randomCell].owner != Cell.CellOwner.None || !AreCellsLeft())
+		while (GameManager.I.Cells[randomCell].owner != Cell.CellOwner.None)
 		{
 			randomCell = Random.Range(0, GameManager.I.Cells.Length);
+
+			if (!AreCellsLeft())
+			{
+				return;
+			}
 		}
 
 		if(AIBrainID == 0)
