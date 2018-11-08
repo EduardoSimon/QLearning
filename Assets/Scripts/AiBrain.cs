@@ -1,11 +1,45 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
-public class AiBrain : MonoBehaviour {
+public class AiBrain : MonoBehaviour
+{
+	private int AIBrainID;
+	
+	private void Start()
+	{
+		AIBrainID = Array.IndexOf(GameManager.I.Brains, this);
+	}
 
 	public void ProcessAgentPlay()
 	{
-		throw new System.NotImplementedException();
+		int randomCell = Random.Range(0, GameManager.I.Cells.Length);
+
+		while (GameManager.I.Cells[randomCell].owner != Cell.CellOwner.None || !AreCellsLeft())
+		{
+			randomCell = Random.Range(0, GameManager.I.Cells.Length);
+		}
+
+		if(AIBrainID == 0)
+			GameManager.I.Cells[randomCell].owner = Cell.CellOwner.Agent1;
+		else if (AIBrainID == 1)
+			GameManager.I.Cells[randomCell].owner = Cell.CellOwner.Agent2;
+		
+		
+		GameManager.I.Cells[randomCell].UpdateColor();
+	}
+
+	private bool AreCellsLeft()
+	{
+		foreach (var cell in GameManager.I.Cells)
+		{
+			if (cell.owner == Cell.CellOwner.None)
+				return true;
+		}
+
+		return false;
 	}
 }

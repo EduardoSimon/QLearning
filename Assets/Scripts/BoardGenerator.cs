@@ -17,13 +17,14 @@ public class BoardGenerator : MonoBehaviour
 	void Awake()
 	{
 		Cells = new Cell[9];
+		GameManager.I.Cells = Cells;
 	}
 
 	[ContextMenu("Generate Board")]
 	public void GenerateBoard()
 	{
 		Vector3 topLeft = transform.position - new Vector3(Mathf.RoundToInt(BoardSize.x / 2), 0, Mathf.RoundToInt( - BoardSize.y / 2));
-		//Debug.DrawRay(transform.position, topLeft, Color.green,20.0f);
+		Debug.DrawRay(transform.position, topLeft, Color.green,20.0f);
 
 		int cellCounter = 0;
 		for (int j = 0; j < BoardSize.y; j++)
@@ -32,13 +33,13 @@ public class BoardGenerator : MonoBehaviour
 			{
 				Vector3 worldPos = topLeft + Vector3.right * (CellRadius) +
 				                   Vector3.back * CellRadius + //ajustamos el primero
-				                   Vector3.right * (CellRadius * 2 + CellRadius) * i + //rellenamos hacia la derecha
-				                   Vector3.back * (CellRadius * 2 + CellRadius) * j; //rellenamos hacia delante, z es hacia delante
+				                   Vector3.right * (CellRadius) * i + //rellenamos hacia la derecha
+				                   Vector3.back *  (CellRadius) * j; //rellenamos hacia delante, z es hacia delante
 				
 				Cell cell = Instantiate(CellPrefab, worldPos, Quaternion.identity);
 				cell.transform.localScale *= ScaleFactor;
-				cell.i = i;
-				cell.j = j;
+				cell.I = i;
+				cell.J = j;
 				Cells[cellCounter] = cell;
 				cellCounter++;
 			}
