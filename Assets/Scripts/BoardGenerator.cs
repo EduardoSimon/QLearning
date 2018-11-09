@@ -27,14 +27,14 @@ public class BoardGenerator : MonoBehaviour
 		Debug.DrawRay(transform.position, topLeft, Color.green,20.0f);
 
 		int cellCounter = 0;
-		for (int j = 0; j < BoardSize.y; j++)
+		for (int i = 0; i < BoardSize.y; i++)
 		{
-			for (int i = 0; i < BoardSize.x; i++)
+			for (int j = 0; j < BoardSize.x; j++)
 			{
 				Vector3 worldPos = topLeft + Vector3.right * (CellRadius) +
 				                   Vector3.back * CellRadius + //ajustamos el primero
-				                   Vector3.right * (CellRadius) * i + //rellenamos hacia la derecha
-				                   Vector3.back *  (CellRadius) * j; //rellenamos hacia delante, z es hacia delante
+				                   Vector3.right * (CellRadius) * j + //rellenamos hacia la derecha
+				                   Vector3.back *  (CellRadius) * i; //rellenamos hacia delante, z es hacia delante
 				
 				Cell cell = Instantiate(CellPrefab, worldPos, Quaternion.identity);
 				cell.transform.localScale *= ScaleFactor;

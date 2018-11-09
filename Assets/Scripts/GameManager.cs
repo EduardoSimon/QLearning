@@ -33,6 +33,7 @@ public class GameManager : Singleton<GameManager>
     private Player _player;
     private Turn _lastTurn;
     [SerializeField] private bool _isPlayerPlaying;
+    [SerializeField] private Cell.CellOwner _winner;
 
     private void OnEnable()
     {
@@ -52,6 +53,7 @@ public class GameManager : Singleton<GameManager>
             {
                 case Gamestate.EndGame:
                     Debug.Log("Ending Game");
+                    Debug.Log("The winner is: " + _winner);
                     IsGameFinished = true;
                     yield return null;
                     break;
@@ -131,6 +133,7 @@ public class GameManager : Singleton<GameManager>
     {
         IsGameFinished = false;
         _board.GenerateBoard();
+        _winner = Cell.CellOwner.None;
         GameState = Gamestate.GameStart;
         StartCoroutine(GameLoop());
     }
@@ -173,10 +176,20 @@ public class GameManager : Singleton<GameManager>
     
     private bool IsGameEnded()
     {
-        if (!CheckIfAllOwned()) return false;
+        if (CheckIfAllOwned()) return true;
 
-        print("Game Finished");
-        return true;
+        foreach (var cell in Cells)
+        {
+            Cell.WinnerData winData = cell.IsAWinnerCombination();
+
+            if (winData.IsWinner)
+            {
+                _winner = winData.Owner;
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private bool CheckIfAllOwned()
