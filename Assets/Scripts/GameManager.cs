@@ -28,12 +28,30 @@ public class GameManager : Singleton<GameManager>
     public bool IsGameFinished;
     public AiBrain[] Brains = new AiBrain[2];
     public float WaitingTime = 1f;
+    public bool isLearning;
+    public Session LearningSession;
 
     private BoardGenerator _board;
     private Player _player;
     private Turn _lastTurn;
     [SerializeField] private bool _isPlayerPlaying;
-    [SerializeField] private Cell.CellOwner _winner;
+    public Cell.CellOwner Winner { get; private set; }
+
+
+    private void Awake()
+    {
+        //TODO RISKY junto con el sceneLoaded, puede que coja las referencias 2 veces y pete
+        GatherReferences();
+
+        if (!_isPlayerPlaying)
+        {
+            if(Brains[1].IsAgentLearning)
+                Debug.LogError("Both agents are learning, please uncheck the learning toggle in the agent 2");
+            
+            isLearning = Brains[0].IsAgentLearning;
+            LearningSession = new Session(0.9f, 0.8f, 0.9);
+        }
+    }
 
     private void OnEnable()
     {
@@ -53,7 +71,7 @@ public class GameManager : Singleton<GameManager>
             {
                 case Gamestate.EndGame:
                     Debug.Log("Ending Game");
-                    Debug.Log("The winner is: " + _winner);
+                    Debug.Log("The winner is: " + Winner);
                     IsGameFinished = true;
                     yield return null;
                     break;
@@ -109,6 +127,7 @@ public class GameManager : Singleton<GameManager>
                     {
                         Brains[0].ProcessAgentPlay();
                         Brains[1].ProcessAgentPlay();
+                        Brains[0].UpdateQValue();
                     }
                     
                     if (IsGameEnded())
@@ -127,14 +146,16 @@ public class GameManager : Singleton<GameManager>
     {
         GatherReferences();
         InitGame(); // TODO add menu functionality
+        
     }
 
     private void InitGame()
     {
         IsGameFinished = false;
         _board.GenerateBoard();
-        _winner = Cell.CellOwner.None;
+        Winner = Cell.CellOwner.None;
         GameState = Gamestate.GameStart;
+        
         StartCoroutine(GameLoop());
     }
     
@@ -174,7 +195,7 @@ public class GameManager : Singleton<GameManager>
         }
     }
     
-    private bool IsGameEnded()
+    public bool IsGameEnded()
     {
         if (CheckIfAllOwned()) return true;
 
@@ -184,7 +205,7 @@ public class GameManager : Singleton<GameManager>
 
             if (winData.IsWinner)
             {
-                _winner = winData.Owner;
+                Winner = winData.Owner;
                 return true;
             }
         }
@@ -201,5 +222,17 @@ public class GameManager : Singleton<GameManager>
         }
 
         return true;
+    }
+
+    public Cell.CellOwner[] GetCellsOwner(Cell[] cells)
+    {
+        Cell.CellOwner[] cellOwners = new Cell.CellOwner[9];
+        for (var index = 0; index < GameManager.I.Cells.Length; index++)
+        {
+            var cell = GameManager.I.Cells[index];
+            cellOwners[index] = cell.owner;
+        }
+
+        return cellOwners;
     }
 }

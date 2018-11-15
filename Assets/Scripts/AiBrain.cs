@@ -8,6 +8,8 @@ using Random = UnityEngine.Random;
 public class AiBrain : MonoBehaviour
 {
 	private int AIBrainID;
+	public bool IsAgentLearning;
+	private Session.GameState lastPlay;
 	
 	private void Start()
 	{
@@ -15,6 +17,55 @@ public class AiBrain : MonoBehaviour
 	}
 
 	public void ProcessAgentPlay()
+	{
+		if (!IsAgentLearning)
+		{
+			SelectRandomCell();
+		}
+		else
+		{
+			lastPlay = ObserveState();
+		}
+
+	}
+
+	private Session.GameState ObserveState()
+	{
+		float value = Random.value;
+
+		if (value <= Session.Epsilon)
+		{
+			int action = Random.Range(0, 9);
+
+			while (GameManager.I.Cells[action].owner != Cell.CellOwner.None)
+			{
+				action = Random.Range(0, 9);
+			}
+			
+			return new Session.GameState(GameManager.I.GetCellsOwner(GameManager.I.Cells),action);
+		}
+		
+		return GameManager.I.LearningSession.CheckBestActionAtGameState(GameManager.I.GetCellsOwner(GameManager.I.Cells));
+	}
+
+	public void UpdateQValue()
+	{
+		Cell.CellOwner owner = AIBrainID == 0 ? Cell.CellOwner.Agent1 : Cell.CellOwner.Agent2;
+		int reward = GameManager.I.LearningSession.Reward(owner);
+
+		Session session = GameManager.I.LearningSession;
+
+		float newQ = session.QDictionary[lastPlay]
+		             + session.LearningRate
+		             * (reward +
+		                (session.DiscountFactor * session.CheckBestQValueAtGameState(lastPlay.Cells))
+		                - session.QDictionary[lastPlay]);
+
+		session.QDictionary[lastPlay] = newQ;
+		session.UpdateHyperParamters();
+	}
+	
+	private void SelectRandomCell()
 	{
 		int randomCell = Random.Range(0, GameManager.I.Cells.Length);
 
@@ -28,12 +79,12 @@ public class AiBrain : MonoBehaviour
 			}
 		}
 
-		if(AIBrainID == 0)
+		if (AIBrainID == 0)
 			GameManager.I.Cells[randomCell].owner = Cell.CellOwner.Agent1;
 		else if (AIBrainID == 1)
 			GameManager.I.Cells[randomCell].owner = Cell.CellOwner.Agent2;
-		
-		
+
+
 		GameManager.I.Cells[randomCell].UpdateColor();
 	}
 
@@ -47,4 +98,5 @@ public class AiBrain : MonoBehaviour
 
 		return false;
 	}
+
 }
