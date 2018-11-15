@@ -8,11 +8,12 @@ public class Cell : MonoBehaviour
 {
     public enum CellOwner
     {
-        Player,
+        None,
         Agent1,
         Agent2,
-        None
+        Player
     }
+
     public int I;
     public int J;
     public CellOwner owner;

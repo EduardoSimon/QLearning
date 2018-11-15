@@ -9,30 +9,30 @@ Prefab:
     m_Modifications: []
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 0}
-  m_RootGameObject: {fileID: 1267032517865052}
+  m_RootGameObject: {fileID: 1555070254812878}
   m_IsPrefabAsset: 1
---- !u!1 &1267032517865052
+--- !u!1 &1555070254812878
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 4266343722374682}
-  - component: {fileID: 114090680775882072}
+  - component: {fileID: 4198003962891954}
+  - component: {fileID: 114216580608213040}
   m_Layer: 0
-  m_Name: GameManager
-  m_TagString: Untagged
+  m_Name: ReadingDataAgent
+  m_TagString: Agent1
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &4266343722374682
+--- !u!4 &4198003962891954
 Transform:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1267032517865052}
+  m_GameObject: {fileID: 1555070254812878}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.21217877, y: -0.5, z: -0.020868132}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -40,34 +40,16 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &114090680775882072
+--- !u!114 &114216580608213040
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1267032517865052}
+  m_GameObject: {fileID: 1555070254812878}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0f549be5271769041a78fcf7cb67a94e, type: 3}
+  m_Script: {fileID: 11500000, guid: 38061487189993f41b6e42df5dbc0b6d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Cells:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  GameState: 3
-  IsGameFinished: 0
-  Brains:
-  - {fileID: 0}
-  - {fileID: 0}
-  WaitingTime: 0.01
-  IsLearning: 0
-  IsUsingFileData: 0
-  SessionFileName: session100
-  _isPlayerPlaying: 0
+  IsAgentLearning: 0
+  isUsingFileData: 1

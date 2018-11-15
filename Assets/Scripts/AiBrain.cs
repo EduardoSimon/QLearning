@@ -7,24 +7,38 @@ using Random = UnityEngine.Random;
 
 public class AiBrain : MonoBehaviour
 {
-	private int AIBrainID;
+	private int _aiBrainId;
 	public bool IsAgentLearning;
-	private Session.GameState lastPlay;
-	
+	public bool isUsingFileData;
+	private Session.GameState _lastPlay;
+
+	private void Awake()
+	{
+		Debug.Log(GameManager.I.name);
+	}
+
 	private void Start()
 	{
-		AIBrainID = Array.IndexOf(GameManager.I.Brains, this);
+		_aiBrainId = Array.IndexOf(GameManager.I.Brains, this);
 	}
 
 	public void ProcessAgentPlay()
 	{
-		if (!IsAgentLearning)
+		if (!IsAgentLearning && _aiBrainId == 1)
 		{
 			SelectRandomCell();
 		}
-		else
+		else if(IsAgentLearning)
 		{
-			lastPlay = ObserveState();
+			_lastPlay = ObserveState();
+			GameManager.I.Cells[_lastPlay.indexAction].owner = Cell.CellOwner.Agent1;
+			GameManager.I.Cells[_lastPlay.indexAction].UpdateColor();
+		}
+		else if (isUsingFileData)
+		{
+			Session.GameState play = GameManager.I.LearningSession.CheckBestActionAtGameState(GameManager.I.GetCellsOwner(GameManager.I.Cells));
+			GameManager.I.Cells[play.indexAction].owner = Cell.CellOwner.Agent1;
+			GameManager.I.Cells[play.indexAction].UpdateColor();
 		}
 
 	}
@@ -42,6 +56,8 @@ public class AiBrain : MonoBehaviour
 				action = Random.Range(0, 9);
 			}
 			
+			GameManager.I.Cells[action].owner = Cell.CellOwner.Agent1;
+			GameManager.I.Cells[action].UpdateColor();
 			return new Session.GameState(GameManager.I.GetCellsOwner(GameManager.I.Cells),action);
 		}
 		
@@ -50,18 +66,21 @@ public class AiBrain : MonoBehaviour
 
 	public void UpdateQValue()
 	{
-		Cell.CellOwner owner = AIBrainID == 0 ? Cell.CellOwner.Agent1 : Cell.CellOwner.Agent2;
+		Cell.CellOwner owner = _aiBrainId == 0 ? Cell.CellOwner.Agent1 : Cell.CellOwner.Agent2;
 		int reward = GameManager.I.LearningSession.Reward(owner);
 
 		Session session = GameManager.I.LearningSession;
 
-		float newQ = session.QDictionary[lastPlay]
+		if (!session.QDictionary.ContainsKey(_lastPlay))
+			session.QDictionary[_lastPlay] = 0;
+			
+		float newQ = session.QDictionary[_lastPlay]
 		             + session.LearningRate
 		             * (reward +
-		                (session.DiscountFactor * session.CheckBestQValueAtGameState(lastPlay.Cells))
-		                - session.QDictionary[lastPlay]);
+		                (session.DiscountFactor * session.CheckBestQValueAtGameState(_lastPlay.Cells))
+		                - session.QDictionary[_lastPlay]);
 
-		session.QDictionary[lastPlay] = newQ;
+		session.QDictionary[_lastPlay] = newQ;
 		session.UpdateHyperParamters();
 	}
 	
@@ -79,12 +98,7 @@ public class AiBrain : MonoBehaviour
 			}
 		}
 
-		if (AIBrainID == 0)
-			GameManager.I.Cells[randomCell].owner = Cell.CellOwner.Agent1;
-		else if (AIBrainID == 1)
-			GameManager.I.Cells[randomCell].owner = Cell.CellOwner.Agent2;
-
-
+		GameManager.I.Cells[randomCell].owner = Cell.CellOwner.Agent2;
 		GameManager.I.Cells[randomCell].UpdateColor();
 	}
 

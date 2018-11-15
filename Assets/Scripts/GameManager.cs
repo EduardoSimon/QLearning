@@ -27,10 +27,10 @@ public class GameManager : Singleton<GameManager>
     public Gamestate GameState = Gamestate.GameStart;
     public bool IsGameFinished;
     public AiBrain[] Brains = new AiBrain[2];
-    public float WaitingTime = 1f;
-    public bool isLearning;
+    public float WaitingTime = 0.01f;
+    public bool IsLearning;
     public Session LearningSession;
-
+    public string SessionFileName = "session20000";
     private BoardGenerator _board;
     private Player _player;
     private Turn _lastTurn;
@@ -40,6 +40,7 @@ public class GameManager : Singleton<GameManager>
 
     private void Awake()
     {
+        Debug.Log(Application.dataPath);
         //TODO RISKY junto con el sceneLoaded, puede que coja las referencias 2 veces y pete
         GatherReferences();
 
@@ -48,9 +49,16 @@ public class GameManager : Singleton<GameManager>
             if(Brains[1].IsAgentLearning)
                 Debug.LogError("Both agents are learning, please uncheck the learning toggle in the agent 2");
             
-            isLearning = Brains[0].IsAgentLearning;
-            LearningSession = new Session(0.9f, 0.8f, 0.9);
+            IsLearning = Brains[0].IsAgentLearning;
+            LearningSession = new Session(0.9f, 0.8f, 0.9,20000);
         }
+
+        if (!IsLearning && Brains[0].isUsingFileData)
+        {
+            LearningSession = new Session();
+            LearningSession.LoadSessionFile(SessionFileName);            
+        }
+        
     }
 
     private void OnEnable()
@@ -125,6 +133,7 @@ public class GameManager : Singleton<GameManager>
                     }
                     else
                     {
+                        //todo hacer que los dos esten aprendiendo y actuen sobre el mismo diccionario
                         Brains[0].ProcessAgentPlay();
                         Brains[1].ProcessAgentPlay();
                         Brains[0].UpdateQValue();
@@ -176,20 +185,19 @@ public class GameManager : Singleton<GameManager>
         {
             Debug.LogError("Not player Found");
             _isPlayerPlaying = false;
+            Brains[1] = GameObject.FindGameObjectWithTag("Agent2").GetComponent<AiBrain>();
         }
         else
         {
             _isPlayerPlaying = true;
         }
 
-        
-        //check how many brains there are
-        Brains = FindObjectsOfType<AiBrain>();
-        
-        if(Brains == null)
-            Debug.LogError("Not brains found");
+        Brains[0] = GameObject.FindGameObjectWithTag("Agent1").GetComponent<AiBrain>();
 
-        if (Brains.Count(elem => elem != null) > 1  && _isPlayerPlaying)
+        if(Brains == null)
+            Debug.LogError("Not brains found please drag them in the inspector. Brain 0 trains and brain 1 plays randomly");
+
+        if (Brains.Length > 1  && _isPlayerPlaying)
         {
             Debug.Log("There are 2 brains and one player, please remove one brain.");
         }
