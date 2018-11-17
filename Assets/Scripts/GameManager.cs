@@ -30,7 +30,7 @@ public class GameManager : Singleton<GameManager>
     public float WaitingTime = 0.01f;
     public bool IsLearning;
     public Session LearningSession;
-    public string SessionFileName = "session20000";
+    public string SessionFileName = "session100";
     private BoardGenerator _board;
     private Player _player;
     private Turn _lastTurn;
@@ -38,9 +38,10 @@ public class GameManager : Singleton<GameManager>
     public Cell.CellOwner Winner { get; private set; }
 
 
-    private void Awake()
+    protected override void Awake()
     {
-        Debug.Log(Application.dataPath);
+        base.Awake();
+        
         //TODO RISKY junto con el sceneLoaded, puede que coja las referencias 2 veces y pete
         GatherReferences();
 
@@ -155,12 +156,12 @@ public class GameManager : Singleton<GameManager>
     {
         GatherReferences();
         InitGame(); // TODO add menu functionality
-        
     }
 
     private void InitGame()
     {
         IsGameFinished = false;
+        Cells = new Cell[9];
         _board.GenerateBoard();
         Winner = Cell.CellOwner.None;
         GameState = Gamestate.GameStart;
@@ -175,8 +176,7 @@ public class GameManager : Singleton<GameManager>
 
         if (_board == null)
             Debug.LogError("No Board found.");
-        else
-            Cells = _board.Cells;
+
         
         //find the player and check if its training or playing
         _player = FindObjectOfType<Player>();

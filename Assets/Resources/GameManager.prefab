@@ -51,6 +51,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f549be5271769041a78fcf7cb67a94e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  UseLazyInstantiation: 0
   Cells:
   - {fileID: 0}
   - {fileID: 0}
@@ -68,6 +69,5 @@ MonoBehaviour:
   - {fileID: 0}
   WaitingTime: 0.01
   IsLearning: 0
-  IsUsingFileData: 0
-  SessionFileName: session100
+  SessionFileName: session20000
   _isPlayerPlaying: 0

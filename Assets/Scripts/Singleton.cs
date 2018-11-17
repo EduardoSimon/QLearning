@@ -6,6 +6,7 @@
  */
 
 using UnityEngine;
+using UnityEngine.Serialization;
 
 /// <summary>
 /// Be aware this will not prevent a non singleton constructor
@@ -16,9 +17,27 @@ using UnityEngine;
 /// </summary>
 public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
 {
+    [Header("Singleton Options")]
+    public bool UseLazyInstantiation = false;
+    
     private static T _instance;
 
     private static readonly object _lock = new object();
+
+    protected virtual void Awake()
+    {              
+        if(!UseLazyInstantiation)
+        {
+            /*if(_instance != null && _instance != this)
+            {
+                Destroy(this.gameObject);
+            }    */
+
+            _instance = this as T;
+            DontDestroyOnLoad(this.gameObject);
+            
+        }
+    }
 
     public static T I
     {

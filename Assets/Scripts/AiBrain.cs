@@ -12,11 +12,6 @@ public class AiBrain : MonoBehaviour
 	public bool isUsingFileData;
 	private Session.GameState _lastPlay;
 
-	private void Awake()
-	{
-		Debug.Log(GameManager.I.name);
-	}
-
 	private void Start()
 	{
 		_aiBrainId = Array.IndexOf(GameManager.I.Brains, this);

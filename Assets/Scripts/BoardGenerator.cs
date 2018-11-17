@@ -17,7 +17,7 @@ public class BoardGenerator : MonoBehaviour
 	void Awake()
 	{
 		Cells = new Cell[9];
-		GameManager.I.Cells = Cells;
+		//GameManager.I.Cells = Cells;
 	}
 
 	[ContextMenu("Generate Board")]
@@ -44,5 +44,7 @@ public class BoardGenerator : MonoBehaviour
 				cellCounter++;
 			}
 		}
+		
+		GameManager.I.Cells = Cells;
 	}
 }
