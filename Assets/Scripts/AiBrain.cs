@@ -67,7 +67,9 @@ public class AiBrain : MonoBehaviour
 		Session session = GameManager.I.LearningSession;
 
 		if (!session.QDictionary.ContainsKey(_lastPlay))
-			session.QDictionary[_lastPlay] = 0;
+		{
+			session.QDictionary[_lastPlay] = reward;
+		}
 			
 		float newQ = session.QDictionary[_lastPlay]
 		             + session.LearningRate

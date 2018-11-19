@@ -7,8 +7,10 @@ using System.Text;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
+[System.Serializable]
 public class Session {
 
+	[System.Serializable]
 	public class GameState
 	{
 		public Cell.CellOwner[] Cells;
@@ -179,7 +181,7 @@ public class Session {
 		if(LearningRate >= 0.01f) 
 			LearningRate -= 0.001f;
 		if(Epsilon >= 0.1f) 
-			Epsilon -= 0.001f;
+			Epsilon -= 0.01f;
 		Steps += 1;
 
 		if (Steps >= MaxSteps && MaxSteps != 0)

@@ -69,5 +69,6 @@ MonoBehaviour:
   - {fileID: 0}
   WaitingTime: 0.01
   IsLearning: 0
-  SessionFileName: session20000
+  SessionFileName: session200
+  SessionIterations: 200
   _isPlayerPlaying: 0
