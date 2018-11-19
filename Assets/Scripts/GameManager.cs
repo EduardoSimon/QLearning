@@ -11,10 +11,11 @@ public class GameManager : Singleton<GameManager>
     public enum Gamestate
     {
         PlayerTurn = 0,
-        IaTurn = 1,
-        ChangingTurn = 2,
-        GameStart = 3,
-        EndGame = 4
+        IaTurn1 = 1,
+        IaTurn2 = 2,
+        ChangingTurn = 3,
+        GameStart = 4,
+        EndGame = 5
     }
 
     private enum Turn
@@ -31,11 +32,14 @@ public class GameManager : Singleton<GameManager>
     public bool IsLearning;
     public Session LearningSession;
     public string SessionFileName = "session100";
+    public int SessionIterations = 200;
     private BoardGenerator _board;
     private Player _player;
     private Turn _lastTurn;
     [SerializeField] private bool _isPlayerPlaying;
     public Cell.CellOwner Winner { get; private set; }
+
+    private int learningTurn;
 
 
     protected override void Awake()
@@ -47,14 +51,13 @@ public class GameManager : Singleton<GameManager>
 
         if (!_isPlayerPlaying)
         {
-            if(Brains[1].IsAgentLearning)
-                Debug.LogError("Both agents are learning, please uncheck the learning toggle in the agent 2");
-            
-            IsLearning = Brains[0].IsAgentLearning;
-            LearningSession = new Session(0.9f, 0.8f, 0.9,20000);
+            Brains[0].IsAgentLearningThisTurn = false;
+            Brains[1].IsAgentLearningThisTurn = false;
+            IsLearning = true;
+            LearningSession = new Session(0.9f, 0.8f, 0.9,SessionIterations);
         }
 
-        if (!IsLearning && Brains[0].isUsingFileData)
+        if (Brains[0].IsUsingFileData || Brains[1].IsUsingFileData)
         {
             LearningSession = new Session();
             LearningSession.LoadSessionFile(SessionFileName);            
@@ -81,6 +84,7 @@ public class GameManager : Singleton<GameManager>
                 case Gamestate.EndGame:
                     Debug.Log("Ending Game");
                     Debug.Log("The winner is: " + Winner);
+                    LearningSession.UpdateHyperParamters();
                     IsGameFinished = true;
                     yield return null;
                     break;
@@ -88,9 +92,15 @@ public class GameManager : Singleton<GameManager>
                 case Gamestate.GameStart:
                     yield return new WaitForSeconds(WaitingTime);
                     if (_isPlayerPlaying)
-                        GameState = Random.value > 0.5f ? Gamestate.PlayerTurn : Gamestate.IaTurn;
+                        GameState = Random.value > 0.5f ? Gamestate.PlayerTurn : Gamestate.IaTurn1;
                     else
-                        GameState = Gamestate.IaTurn;
+                    {
+                        if (Brains[0].IsAgentLearningThisTurn)
+                            GameState = Gamestate.IaTurn1;
+                        else if (Brains[1].IsAgentLearningThisTurn)
+                            GameState = Gamestate.IaTurn2;
+                    }
+                        
 
                     yield return null;
                     break;
@@ -117,14 +127,19 @@ public class GameManager : Singleton<GameManager>
                     yield return new WaitForSeconds(WaitingTime);
                     
                     if (_isPlayerPlaying)
-                        GameState = _lastTurn == Turn.Player ? Gamestate.IaTurn : Gamestate.PlayerTurn;
+                        GameState = _lastTurn == Turn.Player ? Gamestate.IaTurn1 : Gamestate.PlayerTurn;
                     else
-                        GameState = Gamestate.IaTurn;
+                    {
+                        if (Brains[0].IsAgentLearningThisTurn)
+                            GameState = Gamestate.IaTurn2;
+                        else if (Brains[1].IsAgentLearningThisTurn)
+                            GameState = Gamestate.IaTurn1;
+                    }
+                        
                     yield return null;
                     break;
                 
-                case Gamestate.IaTurn:
-                    Debug.Log("Enemy turn");
+                case Gamestate.IaTurn1:
 
                     if (_isPlayerPlaying)
                     {
@@ -134,11 +149,30 @@ public class GameManager : Singleton<GameManager>
                     }
                     else
                     {
-                        //todo hacer que los dos esten aprendiendo y actuen sobre el mismo diccionario
+                        Debug.Log("agent 1 turn");
+                        Brains[0].IsAgentLearningThisTurn = true;
+                        Brains[1].IsAgentLearningThisTurn = false;
                         Brains[0].ProcessAgentPlay();
                         Brains[1].ProcessAgentPlay();
-                        Brains[0].UpdateQValue();
+                        Brains[0].UpdateQValue();    
+                        GameState = Gamestate.ChangingTurn;
                     }
+                    
+                    if (IsGameEnded())
+                        GameState = Gamestate.EndGame;
+
+                    yield return null;
+                    break;
+                
+                case Gamestate.IaTurn2:
+
+                    Debug.Log("agent 2 turn");
+                    Brains[1].IsAgentLearningThisTurn = true;
+                    Brains[0].IsAgentLearningThisTurn = false;
+                    Brains[1].ProcessAgentPlay();
+                    Brains[0].ProcessAgentPlay();
+                    Brains[1].UpdateQValue();
+                    GameState = Gamestate.ChangingTurn;
                     
                     if (IsGameEnded())
                         GameState = Gamestate.EndGame;
@@ -165,6 +199,21 @@ public class GameManager : Singleton<GameManager>
         _board.GenerateBoard();
         Winner = Cell.CellOwner.None;
         GameState = Gamestate.GameStart;
+        
+        if (IsLearning)
+        {
+            if (Random.value > 0.5f)
+            {
+                Brains[0].IsAgentLearningThisTurn = true;
+                Brains[1].IsAgentLearningThisTurn = false;
+            }
+            else
+            {
+                Brains[1].IsAgentLearningThisTurn = true;
+                Brains[0].IsAgentLearningThisTurn = false;
+            }
+        }
+        
         
         StartCoroutine(GameLoop());
     }
@@ -193,6 +242,9 @@ public class GameManager : Singleton<GameManager>
         }
 
         Brains[0] = GameObject.FindGameObjectWithTag("Agent1").GetComponent<AiBrain>();
+        
+        if(!Brains[0].IsUsingFileData)
+            Brains[1] = GameObject.FindGameObjectWithTag("Agent2").GetComponent<AiBrain>();
 
         if(Brains == null)
             Debug.LogError("Not brains found please drag them in the inspector. Brain 0 trains and brain 1 plays randomly");

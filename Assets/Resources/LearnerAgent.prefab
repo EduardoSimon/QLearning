@@ -51,4 +51,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 38061487189993f41b6e42df5dbc0b6d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsAgentLearning: 1
+  IsAgentLearningThisTurn: 0
+  IsUsingFileData: 0

@@ -104,14 +104,16 @@ public class Session {
 	}
 
 	public int Reward(Cell.CellOwner agent)
-	{
+	{		
 		if (!GameManager.I.IsGameEnded())
 			return 0;
 
-		if (GameManager.I.Winner == agent)
+		if (agent == Cell.CellOwner.Agent1 && GameManager.I.Brains[0].IsAgentLearningThisTurn ||
+		    agent == Cell.CellOwner.Agent2 && GameManager.I.Brains[1].IsAgentLearningThisTurn)
 			return 1;
 		
-		if (GameManager.I.Winner == Cell.CellOwner.Agent2)
+		if (GameManager.I.Brains[0].IsAgentLearningThisTurn && GameManager.I.Winner == Cell.CellOwner.Agent2 ||
+		    GameManager.I.Brains[1].IsAgentLearningThisTurn && GameManager.I.Winner == Cell.CellOwner.Agent1)
 			return -1;
 
 		return 0;
@@ -125,7 +127,7 @@ public class Session {
 		{
 			GameState gameState = new GameState(owners,i);
 			
-			if(IsValidAction(gameState) && QDictionary.ContainsKey(gameState))
+			if(QDictionary.ContainsKey(gameState))
 				if (QDictionary[gameState] > tempMaxQ)
 					tempMaxQ = QDictionary[gameState];
 			
@@ -174,13 +176,13 @@ public class Session {
 	public void UpdateHyperParamters()
 	{
 		//todo hacer decrease de learning rate, epsilon de manera mas eficiente. Y hacerlo visualizar
-		if(LearningRate >= 0.1f) 
+		if(LearningRate >= 0.01f) 
 			LearningRate -= 0.001f;
 		if(Epsilon >= 0.1f) 
 			Epsilon -= 0.001f;
 		Steps += 1;
 
-		if (Steps >= MaxSteps)
+		if (Steps >= MaxSteps && MaxSteps != 0)
 			OnSessionCompleted();
 
 	}

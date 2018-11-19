@@ -8,8 +8,8 @@ using Random = UnityEngine.Random;
 public class AiBrain : MonoBehaviour
 {
 	private int _aiBrainId;
-	public bool IsAgentLearning;
-	public bool isUsingFileData;
+	public bool IsAgentLearningThisTurn;
+	public bool IsUsingFileData;
 	private Session.GameState _lastPlay;
 
 	private void Start()
@@ -19,21 +19,21 @@ public class AiBrain : MonoBehaviour
 
 	public void ProcessAgentPlay()
 	{
-		if (!IsAgentLearning && _aiBrainId == 1)
-		{
-			SelectRandomCell();
-		}
-		else if(IsAgentLearning)
-		{
-			_lastPlay = ObserveState();
-			GameManager.I.Cells[_lastPlay.indexAction].owner = Cell.CellOwner.Agent1;
-			GameManager.I.Cells[_lastPlay.indexAction].UpdateColor();
-		}
-		else if (isUsingFileData)
+		if (IsUsingFileData)
 		{
 			Session.GameState play = GameManager.I.LearningSession.CheckBestActionAtGameState(GameManager.I.GetCellsOwner(GameManager.I.Cells));
 			GameManager.I.Cells[play.indexAction].owner = Cell.CellOwner.Agent1;
 			GameManager.I.Cells[play.indexAction].UpdateColor();
+		}
+		else if(IsAgentLearningThisTurn)
+		{
+			_lastPlay = ObserveState();
+			GameManager.I.Cells[_lastPlay.indexAction].owner =  _aiBrainId == 0 ? Cell.CellOwner.Agent1 : Cell.CellOwner.Agent2;
+			GameManager.I.Cells[_lastPlay.indexAction].UpdateColor();
+		}
+		else if (!IsAgentLearningThisTurn)
+		{
+			SelectRandomCell();
 		}
 
 	}
@@ -76,7 +76,6 @@ public class AiBrain : MonoBehaviour
 		                - session.QDictionary[_lastPlay]);
 
 		session.QDictionary[_lastPlay] = newQ;
-		session.UpdateHyperParamters();
 	}
 	
 	private void SelectRandomCell()
@@ -93,7 +92,7 @@ public class AiBrain : MonoBehaviour
 			}
 		}
 
-		GameManager.I.Cells[randomCell].owner = Cell.CellOwner.Agent2;
+		GameManager.I.Cells[randomCell].owner = _aiBrainId == 0 ? Cell.CellOwner.Agent1 : Cell.CellOwner.Agent2;
 		GameManager.I.Cells[randomCell].UpdateColor();
 	}
 
