@@ -46,7 +46,6 @@ public class GameManager : Singleton<GameManager>
     {
         base.Awake();
         
-        //TODO RISKY junto con el sceneLoaded, puede que coja las referencias 2 veces y pete
         GatherReferences();
 
         if (!_isPlayerPlaying)
@@ -183,13 +182,13 @@ public class GameManager : Singleton<GameManager>
         }
         
         Debug.Log("Reiniciando el juego");
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene(0); //todo load learning session or playing game
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         GatherReferences();
-        InitGame(); // TODO add menu functionality
+        InitGame();
     }
 
     private void InitGame()
@@ -287,9 +286,17 @@ public class GameManager : Singleton<GameManager>
     public Cell.CellOwner[] GetCellsOwner(Cell[] cells)
     {
         Cell.CellOwner[] cellOwners = new Cell.CellOwner[9];
+        
         for (var index = 0; index < GameManager.I.Cells.Length; index++)
         {
             var cell = GameManager.I.Cells[index];
+
+            if (Brains[0].IsUsingFileData && cell.owner == Cell.CellOwner.Player)
+            {
+                cellOwners[index] = Cell.CellOwner.Agent2;
+                continue;
+            }
+            
             cellOwners[index] = cell.owner;
         }
 

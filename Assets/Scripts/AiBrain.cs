@@ -28,7 +28,7 @@ public class AiBrain : MonoBehaviour
 		else if(IsAgentLearningThisTurn)
 		{
 			_lastPlay = ObserveState();
-			GameManager.I.Cells[_lastPlay.indexAction].owner =  _aiBrainId == 0 ? Cell.CellOwner.Agent1 : Cell.CellOwner.Agent2;
+			GameManager.I.Cells[_lastPlay.indexAction].owner =  Cell.CellOwner.Agent1;
 			GameManager.I.Cells[_lastPlay.indexAction].UpdateColor();
 		}
 		else if (!IsAgentLearningThisTurn)
@@ -51,8 +51,6 @@ public class AiBrain : MonoBehaviour
 				action = Random.Range(0, 9);
 			}
 			
-			GameManager.I.Cells[action].owner = Cell.CellOwner.Agent1;
-			GameManager.I.Cells[action].UpdateColor();
 			return new Session.GameState(GameManager.I.GetCellsOwner(GameManager.I.Cells),action);
 		}
 		
@@ -61,21 +59,18 @@ public class AiBrain : MonoBehaviour
 
 	public void UpdateQValue()
 	{
-		Cell.CellOwner owner = _aiBrainId == 0 ? Cell.CellOwner.Agent1 : Cell.CellOwner.Agent2;
+		Cell.CellOwner owner = Cell.CellOwner.Agent1;
 		int reward = GameManager.I.LearningSession.Reward(owner);
 
 		Session session = GameManager.I.LearningSession;
 
 		if (!session.QDictionary.ContainsKey(_lastPlay))
 		{
-			session.QDictionary[_lastPlay] = reward;
+			session.QDictionary[_lastPlay] = 0;
 		}
 			
 		float newQ = session.QDictionary[_lastPlay]
-		             + session.LearningRate
-		             * (reward +
-		                (session.DiscountFactor * session.CheckBestQValueAtGameState(_lastPlay.Cells))
-		                - session.QDictionary[_lastPlay]);
+		             + session.LearningRate * (reward + session.DiscountFactor * session.CheckBestQValueAtGameState(_lastPlay.Cells)  - session.QDictionary[_lastPlay]);
 
 		session.QDictionary[_lastPlay] = newQ;
 	}
@@ -94,7 +89,7 @@ public class AiBrain : MonoBehaviour
 			}
 		}
 
-		GameManager.I.Cells[randomCell].owner = _aiBrainId == 0 ? Cell.CellOwner.Agent1 : Cell.CellOwner.Agent2;
+		GameManager.I.Cells[randomCell].owner = Cell.CellOwner.Agent2;
 		GameManager.I.Cells[randomCell].UpdateColor();
 	}
 

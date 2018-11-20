@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using UnityEditor;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -35,8 +36,42 @@ public class Session {
 		}
 	}
 	
+	public class GameStateComparer : IEqualityComparer<GameState>
+	{
+		public bool Equals(GameState x, GameState y)
+		{
+			
+			for (int i = 0; i < 9; i++)
+			{
+				if (!(y != null && y.Cells[i] == x.Cells[i]))
+					return false;
+			}
+
+			if (!(y.indexAction == x.indexAction))
+				return false;
+
+			return true;
+		}
+
+		public int GetHashCode(GameState obj)
+		{
+			int hashCode = 0;
+
+			for (var index = 0; index < obj.Cells.Length; index++)
+			{
+				int owner = (int)obj.Cells[index];
+				hashCode += owner;
+			}
+
+			hashCode += obj.indexAction;
+
+			return hashCode;
+		}
+	}
+
 	//Cada GameState posee una posible acción. Si no se encuentra la clave en el diccionario significa que aun no se ha explorado
 	//Le ponemos como máxima capacidad todos los posibles estados sin discriminar erroneos 3^9 * cada acción posible por estado: 9
+	//todo crear dos diccionarios
 	public Dictionary<GameState, float> QDictionary { get; private set; }
 	public float LearningRate { get; private set; }
 	public float DiscountFactor { get; private set; }
@@ -46,7 +81,7 @@ public class Session {
 
 	public Session(float learningRate, float discountFactor, double epsilon, int maxSteps)
 	{
-		QDictionary = new Dictionary<GameState, float>(Mathf.RoundToInt(Mathf.Pow(3,9) * 9));
+		QDictionary = new Dictionary<GameState, float>(Mathf.RoundToInt(Mathf.Pow(3,9) * 9), new GameStateComparer());
 		LearningRate = Mathf.Clamp01(learningRate);
 		DiscountFactor = Mathf.Clamp01(discountFactor);
 		Epsilon = epsilon;
@@ -61,7 +96,7 @@ public class Session {
 
 	public void SaveSessionFile(string sessionName)
 	{
-		using (StreamWriter file = new StreamWriter(Application.dataPath + sessionName + ".txt"))
+		using (StreamWriter file = new StreamWriter(Application.dataPath + "/" + sessionName + ".txt"))
 		{
 			foreach (var state in QDictionary.Keys)
 			{
@@ -72,9 +107,9 @@ public class Session {
 	
 	public void LoadSessionFile(string sessionName)
 	{
-		Dictionary<GameState,float> qDictionary = new Dictionary<GameState, float>();
+		Dictionary<GameState,float> qDictionary = new Dictionary<GameState, float>(new GameStateComparer());
 		
-		using (StreamReader file = new StreamReader(Application.dataPath + sessionName + ".txt"))
+		using (StreamReader file = new StreamReader(Application.dataPath + "/" + sessionName + ".txt"))
 		{
 			//the string looks like this 0,0,0,0,0,0,0,0,0,:0:0
 			string s = file.ReadLine();
@@ -110,14 +145,13 @@ public class Session {
 		if (!GameManager.I.IsGameEnded())
 			return 0;
 
-		if (agent == Cell.CellOwner.Agent1 && GameManager.I.Brains[0].IsAgentLearningThisTurn ||
-		    agent == Cell.CellOwner.Agent2 && GameManager.I.Brains[1].IsAgentLearningThisTurn)
+		if (GameManager.I.Winner == Cell.CellOwner.Agent1)
 			return 1;
 		
-		if (GameManager.I.Brains[0].IsAgentLearningThisTurn && GameManager.I.Winner == Cell.CellOwner.Agent2 ||
-		    GameManager.I.Brains[1].IsAgentLearningThisTurn && GameManager.I.Winner == Cell.CellOwner.Agent1)
+		if (GameManager.I.Winner == Cell.CellOwner.Agent2)
 			return -1;
 
+		//si empatan 0
 		return 0;
 	}
 
@@ -129,6 +163,7 @@ public class Session {
 		{
 			GameState gameState = new GameState(owners,i);
 			
+			//comprobar que sea valido
 			if(QDictionary.ContainsKey(gameState))
 				if (QDictionary[gameState] > tempMaxQ)
 					tempMaxQ = QDictionary[gameState];
@@ -147,6 +182,7 @@ public class Session {
 	{
 		GameState tempBestAction = null;
 		float tempMaxQ = 0;
+		List<GameState> similarGameStates = new List<GameState>();
 		
 		for (int i = 0; i < 9; i++)
 		{
@@ -161,14 +197,24 @@ public class Session {
 						tempMaxQ = QDictionary[gameState];
 						tempBestAction = gameState;
 					}
+					else if (QDictionary[gameState] == 0)
+					{
+						similarGameStates.Add(gameState);
+					}
 				}
 				else
 				{
 					QDictionary[gameState] = 0;
-					tempBestAction = gameState;
+					similarGameStates.Add(gameState);
 				}
-				
 			}
+			
+		}
+
+		if (tempBestAction == null)
+		{
+			if(similarGameStates.Count > 0)
+				return similarGameStates[Random.Range(0, similarGameStates.Count - 1)];
 			
 		}
 
@@ -179,9 +225,9 @@ public class Session {
 	{
 		//todo hacer decrease de learning rate, epsilon de manera mas eficiente. Y hacerlo visualizar
 		if(LearningRate >= 0.01f) 
-			LearningRate -= 0.001f;
+			LearningRate -= 0.0001f;
 		if(Epsilon >= 0.1f) 
-			Epsilon -= 0.01f;
+			Epsilon -= 0.0001f;
 		Steps += 1;
 
 		if (Steps >= MaxSteps && MaxSteps != 0)
@@ -191,7 +237,7 @@ public class Session {
 
 	private void OnSessionCompleted()
 	{
-		SaveSessionFile("session" + MaxSteps);
+		SaveSessionFile("session_" + MaxSteps);
 		Application.Quit();
 		
 		#if UNITY_EDITOR
