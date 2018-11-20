@@ -60,7 +60,7 @@ public class Session {
 			for (var index = 0; index < obj.Cells.Length; index++)
 			{
 				int owner = (int)obj.Cells[index];
-				hashCode += owner;
+				hashCode += owner * index;
 			}
 
 			hashCode += obj.indexAction;
@@ -197,15 +197,15 @@ public class Session {
 						tempMaxQ = QDictionary[gameState];
 						tempBestAction = gameState;
 					}
-					else if (QDictionary[gameState] == 0)
+					else if (Mathf.Approximately(0,QDictionary[gameState]))
 					{
 						similarGameStates.Add(gameState);
 					}
 				}
 				else
 				{
-					QDictionary[gameState] = 0;
 					similarGameStates.Add(gameState);
+					QDictionary[gameState] = 0;
 				}
 			}
 			
