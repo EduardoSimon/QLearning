@@ -13,14 +13,18 @@
           <e p="BoardGenerator.cs" t="Include" />
           <e p="cell.cs" t="Include" />
           <e p="GameManager.cs" t="Include" />
+          <e p="GameState.cs" t="Include" />
           <e p="Player.cs" t="Include" />
           <e p="Session.cs" t="Include" />
+          <e p="SessionIO.cs" t="Include" />
           <e p="Singleton.cs" t="Include" />
         </e>
         <e p="session_2.txt" t="Include" />
         <e p="session_2000.txt" t="Include" />
         <e p="session_2002.txt" t="Include" />
+        <e p="session_4000.txt" t="Include" />
         <e p="session_40000.txt" t="Include" />
+        <e p="session_700.txt" t="Include" />
       </e>
       <e p="Library" t="ExcludeRecursive" />
       <e p="obj" t="ExcludeRecursive" />

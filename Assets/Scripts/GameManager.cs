@@ -4,28 +4,35 @@ using System.Linq;
 using UnityEditor;
 using UnityEditor.Experimental.UIElements.GraphView;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.SceneManagement;
 
 public class GameManager : Singleton<GameManager>
 {
-    public enum Gamestate
+    public enum GamePhase
     {
-        PlayerTurn = 0,
-        IaTurn1 = 1,
-        IaTurn2 = 2,
-        ChangingTurn = 3,
-        GameStart = 4,
-        EndGame = 5
+        PlayerTurn,
+        Learning,
+        IaTurn,
+        ChangingTurn,
+        GameStart,
+        EndGame
     }
 
-    private enum Turn
+    private enum PlayingTurn
     {
         Player = 0,
         Ia = 1
     }
+    
+    private enum LearningAgent
+    {
+        Agent1,
+        Agent2
+    }
 
     public Cell[] Cells = new Cell[9];
-    public Gamestate GameState = Gamestate.GameStart;
+    public GamePhase GameState = GamePhase.GameStart;
     public bool IsGameFinished;
     public AiBrain[] Brains = new AiBrain[2];
     public float WaitingTime = 0.01f;
@@ -35,33 +42,41 @@ public class GameManager : Singleton<GameManager>
     public int SessionIterations = 200;
     private BoardGenerator _board;
     private Player _player;
-    private Turn _lastTurn;
+    private PlayingTurn _lastPlayingTurn;
     [SerializeField] private bool _isPlayerPlaying;
     public Cell.CellOwner Winner { get; private set; }
 
-    private int learningTurn;
+    private LearningAgent _learningAgent;
 
 
     protected override void Awake()
     {
         base.Awake();
+        Assert.raiseExceptions = true;
         
         GatherReferences();
 
+        //todo refactor
+        // if is not playing the player then is learning
         if (!_isPlayerPlaying)
         {
-            Brains[0].IsAgentLearningThisTurn = false;
-            Brains[1].IsAgentLearningThisTurn = false;
             IsLearning = true;
             LearningSession = new Session(0.9f, 0.8f, 0.9,SessionIterations);
         }
-
-        if (Brains[0].IsUsingFileData || Brains[1].IsUsingFileData)
+        else
         {
-            LearningSession = new Session();
-            LearningSession.LoadSessionFile(SessionFileName);            
+            //load the corresponding filename
+            IsLearning = false;
+            Brains[0].IsUsingFileData = true;
+            LearningSession = new Session(SessionFileName);       
+        } 
+             
+        //refactor
+        if (IsLearning)
+        {
+            _learningAgent = Random.value >= 0.5 ? LearningAgent.Agent1 : LearningAgent.Agent2;
         }
-        
+
     }
 
     private void OnEnable()
@@ -80,32 +95,19 @@ public class GameManager : Singleton<GameManager>
         {
             switch (GameState)
             {
-                case Gamestate.EndGame:
-                    Debug.Log("Ending Game");
-                    Debug.Log("The winner is: " + Winner);
+                case GamePhase.EndGame:
                     LearningSession.UpdateHyperParamters();
                     IsGameFinished = true;
                     yield return null;
                     break;
                 
-                case Gamestate.GameStart:
+                case GamePhase.GameStart:
                     yield return new WaitForSeconds(WaitingTime);
-                    if (_isPlayerPlaying)
-                        GameState = Random.value > 0.5f ? Gamestate.PlayerTurn : Gamestate.IaTurn1;
-                    else
-                    {
-                        if (Brains[0].IsAgentLearningThisTurn)
-                            GameState = Gamestate.IaTurn1;
-                        else if (Brains[1].IsAgentLearningThisTurn)
-                            GameState = Gamestate.IaTurn2;
-                    }
-                        
-
+                    StartGame();
                     yield return null;
                     break;
                 
-                case Gamestate.PlayerTurn:
-                    Debug.Log("Your turn Player 1");
+                case GamePhase.PlayerTurn:
                     while (!_player.HasPlacedAToken)
                     {
                         yield return new WaitForSeconds(WaitingTime);
@@ -113,76 +115,97 @@ public class GameManager : Singleton<GameManager>
                     }
 
                     _player.HasPlacedAToken = false;
-                    GameState = Gamestate.ChangingTurn;
-                    _lastTurn = Turn.Player;
+                    GameState = GamePhase.ChangingTurn;
+                    _lastPlayingTurn = PlayingTurn.Player;
                     
                     if (IsGameEnded())
-                        GameState = Gamestate.EndGame;
+                        GameState = GamePhase.EndGame;
                     yield return null;
                     break;
                 
-                case Gamestate.ChangingTurn:
-                    Debug.Log("Changing turn.... ");
+                case GamePhase.ChangingTurn:
                     yield return new WaitForSeconds(WaitingTime);
                     
-                    if (_isPlayerPlaying)
-                        GameState = _lastTurn == Turn.Player ? Gamestate.IaTurn1 : Gamestate.PlayerTurn;
-                    else
-                    {
-                        if (Brains[0].IsAgentLearningThisTurn)
-                            GameState = Gamestate.IaTurn2;
-                        else if (Brains[1].IsAgentLearningThisTurn)
-                            GameState = Gamestate.IaTurn1;
-                    }
+                    if (!IsLearning)
+                        GameState = _lastPlayingTurn == PlayingTurn.Player ? GamePhase.IaTurn : GamePhase.PlayerTurn;
                         
                     yield return null;
                     break;
                 
-                case Gamestate.IaTurn1:
-
-                    if (_isPlayerPlaying)
-                    {
-                        Brains[0].ProcessAgentPlay();
-                        _lastTurn = Turn.Ia;
-                        GameState = Gamestate.ChangingTurn;
-                    }
-                    else
-                    {
-                        Debug.Log("agent 1 turn");
-                        Brains[0].IsAgentLearningThisTurn = true;
-                        Brains[1].IsAgentLearningThisTurn = false;
-                        Brains[0].ProcessAgentPlay();
-                        Brains[1].ProcessAgentPlay();
-                        Brains[0].UpdateQValue();    
-                        GameState = Gamestate.ChangingTurn;
-                    }
-                    
+                //todo refactor
+                case GamePhase.Learning:
+                    //hacer que haga un entrenamiento si es primero y otro si es segundo
+                    LearningTurn();    
+                   
                     if (IsGameEnded())
-                        GameState = Gamestate.EndGame;
+                        GameState = GamePhase.EndGame;
 
                     yield return null;
                     break;
                 
-                case Gamestate.IaTurn2:
-
-                    Debug.Log("agent 2 turn");
-                    Brains[1].IsAgentLearningThisTurn = true;
-                    Brains[0].IsAgentLearningThisTurn = false;
-                    Brains[1].ProcessAgentPlay();
-                    Brains[0].ProcessAgentPlay();
-                    Brains[1].UpdateQValue();
-                    GameState = Gamestate.ChangingTurn;
+                case GamePhase.IaTurn:
+                    
+                    if (!IsLearning)
+                    {
+                        Brains[0].ProcessAgentPlay();
+                        _lastPlayingTurn = PlayingTurn.Ia;
+                        GameState = GamePhase.ChangingTurn;
+                    }
                     
                     if (IsGameEnded())
-                        GameState = Gamestate.EndGame;
-
+                        GameState = GamePhase.EndGame;
+                    
+                    
                     yield return null;
                     break;
+                    
             }
         }
         
         Debug.Log("Reiniciando el juego");
         SceneManager.LoadScene(0); //todo load learning session or playing game
+    }
+
+    private void LearningTurn()
+    {
+        if (_learningAgent == LearningAgent.Agent1)
+        {
+            Brains[0].IsAgentLearningThisTurn = true;
+            Brains[1].IsAgentLearningThisTurn = false;
+            Brains[0].ProcessAgentPlay();
+            Brains[1].ProcessAgentPlay();
+            LearningSession.UpdateQValue(Brains[0].LastPlay);
+        }
+        else
+        {
+            Brains[0].IsAgentLearningThisTurn = false;
+            Brains[1].IsAgentLearningThisTurn = true;
+            Brains[1].ProcessAgentPlay();
+            Brains[0].ProcessAgentPlay();
+            LearningSession.UpdateQValue(Brains[1].LastPlay);
+        }
+    }
+
+    private void StartGame()
+    {
+        if (!IsLearning)
+            GameState = Random.value > 0.5f ? GamePhase.PlayerTurn : GamePhase.IaTurn;
+        else
+        {
+            if (_learningAgent == LearningAgent.Agent2)
+            {
+                Brains[0].IsAgentLearningThisTurn = false;
+                Brains[1].IsAgentLearningThisTurn = true;
+                Brains[0].ProcessAgentPlay();
+            }
+            else
+            {
+                Brains[0].IsAgentLearningThisTurn = true;
+                Brains[1].IsAgentLearningThisTurn = false;
+            }
+            
+            GameState = GamePhase.Learning;
+        }
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -197,23 +220,7 @@ public class GameManager : Singleton<GameManager>
         Cells = new Cell[9];
         _board.GenerateBoard();
         Winner = Cell.CellOwner.None;
-        GameState = Gamestate.GameStart;
-        
-        if (IsLearning)
-        {
-            if (Random.value > 0.5f)
-            {
-                Brains[0].IsAgentLearningThisTurn = true;
-                Brains[1].IsAgentLearningThisTurn = false;
-            }
-            else
-            {
-                Brains[1].IsAgentLearningThisTurn = true;
-                Brains[0].IsAgentLearningThisTurn = false;
-            }
-        }
-        
-        
+        GameState =  GamePhase.GameStart;
         StartCoroutine(GameLoop());
     }
     

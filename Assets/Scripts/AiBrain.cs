@@ -10,26 +10,27 @@ public class AiBrain : MonoBehaviour
 	private int _aiBrainId;
 	public bool IsAgentLearningThisTurn;
 	public bool IsUsingFileData;
-	private Session.GameState _lastPlay;
+	public GameState LastPlay { get; private set; }
 
 	private void Start()
 	{
 		_aiBrainId = Array.IndexOf(GameManager.I.Brains, this);
 	}
 
+	//todo possibly refactor time
 	public void ProcessAgentPlay()
 	{
 		if (IsUsingFileData)
 		{
-			Session.GameState play = GameManager.I.LearningSession.CheckBestActionAtGameState(GameManager.I.GetCellsOwner(GameManager.I.Cells));
-			GameManager.I.Cells[play.indexAction].owner = Cell.CellOwner.Agent1;
-			GameManager.I.Cells[play.indexAction].UpdateColor();
+			GameState play = GameManager.I.LearningSession.CheckBestActionAtGameState(GameManager.I.GetCellsOwner(GameManager.I.Cells));
+			GameManager.I.Cells[play.IndexAction].owner = Cell.CellOwner.Agent1;
+			GameManager.I.Cells[play.IndexAction].UpdateColor();
 		}
 		else if(IsAgentLearningThisTurn)
 		{
-			_lastPlay = ObserveState();
-			GameManager.I.Cells[_lastPlay.indexAction].owner =  Cell.CellOwner.Agent1;
-			GameManager.I.Cells[_lastPlay.indexAction].UpdateColor();
+			LastPlay = ObserveState();
+			GameManager.I.Cells[LastPlay.IndexAction].owner =  Cell.CellOwner.Agent1;
+			GameManager.I.Cells[LastPlay.IndexAction].UpdateColor();
 		}
 		else if (!IsAgentLearningThisTurn)
 		{
@@ -38,7 +39,7 @@ public class AiBrain : MonoBehaviour
 
 	}
 
-	private Session.GameState ObserveState()
+	private GameState ObserveState()
 	{
 		float value = Random.value;
 
@@ -51,28 +52,10 @@ public class AiBrain : MonoBehaviour
 				action = Random.Range(0, 9);
 			}
 			
-			return new Session.GameState(GameManager.I.GetCellsOwner(GameManager.I.Cells),action);
+			return new GameState(GameManager.I.GetCellsOwner(GameManager.I.Cells),action);
 		}
 		
 		return GameManager.I.LearningSession.CheckBestActionAtGameState(GameManager.I.GetCellsOwner(GameManager.I.Cells));
-	}
-
-	public void UpdateQValue()
-	{
-		Cell.CellOwner owner = Cell.CellOwner.Agent1;
-		int reward = GameManager.I.LearningSession.Reward(owner);
-
-		Session session = GameManager.I.LearningSession;
-
-		if (!session.QDictionary.ContainsKey(_lastPlay))
-		{
-			session.QDictionary[_lastPlay] = 0;
-		}
-			
-		float newQ = session.QDictionary[_lastPlay]
-		             + session.LearningRate * (reward + session.DiscountFactor * session.CheckBestQValueAtGameState(_lastPlay.Cells)  - session.QDictionary[_lastPlay]);
-
-		session.QDictionary[_lastPlay] = newQ;
 	}
 	
 	private void SelectRandomCell()

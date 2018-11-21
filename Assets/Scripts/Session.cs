@@ -6,68 +6,11 @@ using System.IO;
 using System.Text;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Assertions;
 using Random = UnityEngine.Random;
 
 [System.Serializable]
 public class Session {
-
-	[System.Serializable]
-	public class GameState
-	{
-		public Cell.CellOwner[] Cells;
-		public int indexAction;
-
-		public GameState(Cell.CellOwner[] cells, int indexAction)
-		{
-			this.Cells = cells;
-			this.indexAction = indexAction;
-		}
-
-		public override string ToString()
-		{
-			StringBuilder sb = new StringBuilder();
-			
-			foreach (var cellOwner in Cells)
-			{
-				int i = (int)cellOwner;
-				sb.Append(i +",");
-			}
-			return sb + ":" + indexAction;
-		}
-	}
-	
-	public class GameStateComparer : IEqualityComparer<GameState>
-	{
-		public bool Equals(GameState x, GameState y)
-		{
-			
-			for (int i = 0; i < 9; i++)
-			{
-				if (!(y != null && y.Cells[i] == x.Cells[i]))
-					return false;
-			}
-
-			if (!(y.indexAction == x.indexAction))
-				return false;
-
-			return true;
-		}
-
-		public int GetHashCode(GameState obj)
-		{
-			int hashCode = 0;
-
-			for (var index = 0; index < obj.Cells.Length; index++)
-			{
-				int owner = (int)obj.Cells[index];
-				hashCode += owner * index;
-			}
-
-			hashCode += obj.indexAction;
-
-			return hashCode;
-		}
-	}
 
 	//Cada GameState posee una posible acción. Si no se encuentra la clave en el diccionario significa que aun no se ha explorado
 	//Le ponemos como máxima capacidad todos los posibles estados sin discriminar erroneos 3^9 * cada acción posible por estado: 9
@@ -79,6 +22,13 @@ public class Session {
 	public int Steps { get; private set; }
 	public int MaxSteps { get; private set; }
 
+	/// <summary>
+	/// Use this constructor when you want to start a Leaning Session
+	/// </summary>
+	/// <param name="learningRate">How much you want to take into account the new learnt play</param>
+	/// <param name="discountFactor">How you want the future to affect the current state. Good high if not intermediate rewards</param>
+	/// <param name="epsilon">The probability of using a random play</param>
+	/// <param name="maxSteps">Max learning steps</param>
 	public Session(float learningRate, float discountFactor, double epsilon, int maxSteps)
 	{
 		QDictionary = new Dictionary<GameState, float>(Mathf.RoundToInt(Mathf.Pow(3,9) * 9), new GameStateComparer());
@@ -87,57 +37,16 @@ public class Session {
 		Epsilon = epsilon;
 		Steps = 0;
 		MaxSteps = maxSteps;
-	}
-
-	public Session()
-	{
-	}
-
-
-	public void SaveSessionFile(string sessionName)
-	{
-		using (StreamWriter file = new StreamWriter(Application.dataPath + "/" + sessionName + ".txt"))
-		{
-			foreach (var state in QDictionary.Keys)
-			{
-				file.WriteLine(state + ":" + QDictionary[state]);
-			}
-		}
-	}
-	
-	public void LoadSessionFile(string sessionName)
-	{
-		Dictionary<GameState,float> qDictionary = new Dictionary<GameState, float>(new GameStateComparer());
 		
-		using (StreamReader file = new StreamReader(Application.dataPath + "/" + sessionName + ".txt"))
-		{
-			//the string looks like this 0,0,0,0,0,0,0,0,0,:0:0
-			string s = file.ReadLine();
-			while (s != null)
-			{
-				String[] values = s.Split(':');
-				String[] cells = values[0].Split(new char[]{','},StringSplitOptions.RemoveEmptyEntries);
-				
-				GameState state = new GameState(new Cell.CellOwner[]
-					{
-						(Cell.CellOwner)int.Parse(cells[0]),
-						(Cell.CellOwner)int.Parse(cells[1]),
-						(Cell.CellOwner)int.Parse(cells[2]),
-						(Cell.CellOwner)int.Parse(cells[3]),
-						(Cell.CellOwner)int.Parse(cells[4]),
-						(Cell.CellOwner)int.Parse(cells[5]),
-						(Cell.CellOwner)int.Parse(cells[6]),
-						(Cell.CellOwner)int.Parse(cells[7]),
-						(Cell.CellOwner)int.Parse(cells[8])
-					}, int.Parse(values[1]));
-				float Q = float.Parse(values[2]);
-				
-				qDictionary[state] = Q;
-				s = file.ReadLine();
-			}
-		}
+		Assert.AreNotEqual(maxSteps,0);
+	}
 
-		QDictionary = qDictionary;
+	/// <summary>
+	/// Use this constructor when you want to read a session file
+	/// </summary>
+	public Session(string sessionFileName)
+	{
+		QDictionary = SessionIo.LoadSessionFile(sessionFileName);  
 	}
 
 	public int Reward(Cell.CellOwner agent)
@@ -155,7 +64,7 @@ public class Session {
 		return 0;
 	}
 
-	public float CheckBestQValueAtGameState(Cell.CellOwner[] owners)
+	private float CheckBestQValueAtGameState(Cell.CellOwner[] owners)
 	{
 		float tempMaxQ = 0;
 		
@@ -163,7 +72,6 @@ public class Session {
 		{
 			GameState gameState = new GameState(owners,i);
 			
-			//comprobar que sea valido
 			if(QDictionary.ContainsKey(gameState))
 				if (QDictionary[gameState] > tempMaxQ)
 					tempMaxQ = QDictionary[gameState];
@@ -175,7 +83,7 @@ public class Session {
 
 	private bool IsValidAction(GameState gameState)
 	{
-		return gameState.Cells[gameState.indexAction] == Cell.CellOwner.None;
+		return gameState.Cells[gameState.IndexAction] == Cell.CellOwner.None;
 	}
 
 	public GameState CheckBestActionAtGameState(Cell.CellOwner[] owners)
@@ -225,19 +133,37 @@ public class Session {
 	{
 		//todo hacer decrease de learning rate, epsilon de manera mas eficiente. Y hacerlo visualizar
 		if(LearningRate >= 0.01f) 
-			LearningRate -= 0.0001f;
+			LearningRate -= 0.000001f;
 		if(Epsilon >= 0.1f) 
-			Epsilon -= 0.0001f;
+			Epsilon -= 0.000001f;
 		Steps += 1;
 
 		if (Steps >= MaxSteps && MaxSteps != 0)
 			OnSessionCompleted();
 
 	}
+	
+	public void UpdateQValue(GameState observedPlay)
+	{
+		//todo refactor
+		Cell.CellOwner owner = Cell.CellOwner.Agent1;
+		int reward = GameManager.I.LearningSession.Reward(owner);
+
+
+		if (!QDictionary.ContainsKey(observedPlay))
+		{
+			QDictionary[observedPlay] = 0;
+		}
+			
+		float newQ = QDictionary[observedPlay]
+		             + LearningRate * (reward + DiscountFactor * CheckBestQValueAtGameState(observedPlay.Cells)  - QDictionary[observedPlay]);
+
+		QDictionary[observedPlay] = newQ;
+	}
 
 	private void OnSessionCompleted()
 	{
-		SaveSessionFile("session_" + MaxSteps);
+		SessionIo.SaveSessionFile("session_" + MaxSteps,QDictionary);
 		Application.Quit();
 		
 		#if UNITY_EDITOR

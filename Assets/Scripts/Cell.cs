@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class Cell : MonoBehaviour
 {
+    //refactor verde rojo vacio
     public enum CellOwner
     {
         None,
@@ -26,7 +27,7 @@ public class Cell : MonoBehaviour
 
     public void OnMouseDown()
     {
-        if (GameManager.I.GameState == GameManager.Gamestate.PlayerTurn)
+        if (GameManager.I.GameState == GameManager.GamePhase.PlayerTurn)
         {
             if (owner == CellOwner.None)
             {
