@@ -197,7 +197,7 @@ public class Session {
 						tempMaxQ = QDictionary[gameState];
 						tempBestAction = gameState;
 					}
-					else if (Mathf.Approximately(0,QDictionary[gameState]))
+					else
 					{
 						similarGameStates.Add(gameState);
 					}
