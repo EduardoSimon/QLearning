@@ -18,7 +18,7 @@ public class Session {
 	public Dictionary<GameState, float> QDictionary { get; private set; }
 	public float LearningRate { get; private set; }
 	public float DiscountFactor { get; private set; }
-	public static double Epsilon { get; private set; }
+	public double Epsilon { get; private set; }
 	public int Steps { get; private set; }
 	public int MaxSteps { get; private set; }
 
@@ -49,15 +49,15 @@ public class Session {
 		QDictionary = SessionIo.LoadSessionFile(sessionFileName);  
 	}
 
-	public int Reward(Cell.CellOwner agent)
+	public int Reward(Cell.CellOwner owner)
 	{		
-		if (!GameManager.I.IsGameEnded())
-			return 0;
 
-		if (GameManager.I.Winner == Cell.CellOwner.Agent1)
+		if (GameManager.I.Winner == Cell.CellOwner.Agent1 && owner == Cell.CellOwner.Agent1 ||
+		    GameManager.I.Winner == Cell.CellOwner.Agent2 && owner == Cell.CellOwner.Agent2)
 			return 1;
 		
-		if (GameManager.I.Winner == Cell.CellOwner.Agent2)
+		if (GameManager.I.Winner == Cell.CellOwner.Agent1 && owner == Cell.CellOwner.Agent2 ||
+		    GameManager.I.Winner == Cell.CellOwner.Agent2 && owner == Cell.CellOwner.Agent1)
 			return -1;
 
 		//si empatan 0
@@ -89,7 +89,7 @@ public class Session {
 	public GameState CheckBestActionAtGameState(Cell.CellOwner[] owners)
 	{
 		GameState tempBestAction = null;
-		float tempMaxQ = 0;
+		float tempMaxQ = int.MinValue;
 		List<GameState> similarGameStates = new List<GameState>();
 		
 		for (int i = 0; i < 9; i++)
@@ -100,14 +100,14 @@ public class Session {
 			{
 				if (QDictionary.ContainsKey(gameState))
 				{
-					if (QDictionary[gameState] > tempMaxQ)
+					if(QDictionary[gameState] == 0)
+					{
+						similarGameStates.Add(gameState);
+					}
+					else if (QDictionary[gameState] > tempMaxQ)
 					{
 						tempMaxQ = QDictionary[gameState];
 						tempBestAction = gameState;
-					}
-					else
-					{
-						similarGameStates.Add(gameState);
 					}
 				}
 				else
@@ -132,10 +132,10 @@ public class Session {
 	public void UpdateHyperParamters()
 	{
 		//todo hacer decrease de learning rate, epsilon de manera mas eficiente. Y hacerlo visualizar
-		if(LearningRate >= 0.01f) 
-			LearningRate -= 0.000001f;
+		/*if(LearningRate >= 0.01f) 
+			LearningRate -= 0.00001f;
 		if(Epsilon >= 0.1f) 
-			Epsilon -= 0.000001f;
+			Epsilon -= 0.0001f;*/
 		Steps += 1;
 
 		if (Steps >= MaxSteps && MaxSteps != 0)
@@ -143,10 +143,9 @@ public class Session {
 
 	}
 	
-	public void UpdateQValue(GameState observedPlay)
+	public void UpdateQValue(GameState observedPlay, Cell.CellOwner owner)
 	{
-		//todo refactor
-		Cell.CellOwner owner = Cell.CellOwner.Agent1;
+		
 		int reward = GameManager.I.LearningSession.Reward(owner);
 
 
@@ -156,7 +155,7 @@ public class Session {
 		}
 			
 		float newQ = QDictionary[observedPlay]
-		             + LearningRate * (reward + DiscountFactor * CheckBestQValueAtGameState(observedPlay.Cells)  - QDictionary[observedPlay]);
+		             + LearningRate * (reward + DiscountFactor * CheckBestQValueAtGameState(GameManager.I.GetCellsOwner(GameManager.I.Cells))  - QDictionary[observedPlay]);
 
 		QDictionary[observedPlay] = newQ;
 	}

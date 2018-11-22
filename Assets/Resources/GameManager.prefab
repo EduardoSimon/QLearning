@@ -67,8 +67,9 @@ MonoBehaviour:
   Brains:
   - {fileID: 0}
   - {fileID: 0}
-  WaitingTime: 0.01
+  WaitingTime: 0
   IsLearning: 0
-  SessionFileName: session200
-  SessionIterations: 200
+  SessionFileName: session_1000
+  SessionIterations: 1000
   _isPlayerPlaying: 0
+  _learningAgent: 0

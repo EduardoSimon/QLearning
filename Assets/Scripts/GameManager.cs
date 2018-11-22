@@ -46,7 +46,7 @@ public class GameManager : Singleton<GameManager>
     [SerializeField] private bool _isPlayerPlaying;
     public Cell.CellOwner Winner { get; private set; }
 
-    private LearningAgent _learningAgent;
+    [SerializeField] private LearningAgent _learningAgent;
 
 
     protected override void Awake()
@@ -61,7 +61,7 @@ public class GameManager : Singleton<GameManager>
         if (!_isPlayerPlaying)
         {
             IsLearning = true;
-            LearningSession = new Session(0.9f, 0.8f, 0.9,SessionIterations);
+            LearningSession = new Session(0.5f, 0.8f, 0.5f,SessionIterations);
         }
         else
         {
@@ -70,12 +70,13 @@ public class GameManager : Singleton<GameManager>
             Brains[0].IsUsingFileData = true;
             LearningSession = new Session(SessionFileName);       
         } 
-             
+        
+        /*
         //refactor
         if (IsLearning)
         {
             _learningAgent = Random.value >= 0.5 ? LearningAgent.Agent1 : LearningAgent.Agent2;
-        }
+        }*/
 
     }
 
@@ -174,7 +175,7 @@ public class GameManager : Singleton<GameManager>
             Brains[1].IsAgentLearningThisTurn = false;
             Brains[0].ProcessAgentPlay();
             Brains[1].ProcessAgentPlay();
-            LearningSession.UpdateQValue(Brains[0].LastPlay);
+            LearningSession.UpdateQValue(Brains[0].LastPlay,Cell.CellOwner.Agent1);
         }
         else
         {
@@ -182,7 +183,7 @@ public class GameManager : Singleton<GameManager>
             Brains[1].IsAgentLearningThisTurn = true;
             Brains[1].ProcessAgentPlay();
             Brains[0].ProcessAgentPlay();
-            LearningSession.UpdateQValue(Brains[1].LastPlay);
+            LearningSession.UpdateQValue(Brains[1].LastPlay,Cell.CellOwner.Agent2);
         }
     }
 

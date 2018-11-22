@@ -29,7 +29,7 @@ public class AiBrain : MonoBehaviour
 		else if(IsAgentLearningThisTurn)
 		{
 			LastPlay = ObserveState();
-			GameManager.I.Cells[LastPlay.IndexAction].owner =  Cell.CellOwner.Agent1;
+			GameManager.I.Cells[LastPlay.IndexAction].owner =  _aiBrainId == 0 ? Cell.CellOwner.Agent1 : Cell.CellOwner.Agent2; //todo cambiar esto
 			GameManager.I.Cells[LastPlay.IndexAction].UpdateColor();
 		}
 		else if (!IsAgentLearningThisTurn)
@@ -43,7 +43,7 @@ public class AiBrain : MonoBehaviour
 	{
 		float value = Random.value;
 
-		if (value <= Session.Epsilon)
+		if (value <= GameManager.I.LearningSession.Epsilon)
 		{
 			int action = Random.Range(0, 9);
 
@@ -72,7 +72,7 @@ public class AiBrain : MonoBehaviour
 			}
 		}
 
-		GameManager.I.Cells[randomCell].owner = Cell.CellOwner.Agent2;
+		GameManager.I.Cells[randomCell].owner = _aiBrainId == 0 ? Cell.CellOwner.Agent1 : Cell.CellOwner.Agent2;
 		GameManager.I.Cells[randomCell].UpdateColor();
 	}
 
