@@ -51,7 +51,6 @@ public class Session {
 
 	public int Reward(Cell.CellOwner owner)
 	{		
-
 		if (GameManager.I.Winner == Cell.CellOwner.Agent1 && owner == Cell.CellOwner.Agent1 ||
 		    GameManager.I.Winner == Cell.CellOwner.Agent2 && owner == Cell.CellOwner.Agent2)
 			return 1;

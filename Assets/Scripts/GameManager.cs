@@ -70,13 +70,6 @@ public class GameManager : Singleton<GameManager>
             Brains[0].IsUsingFileData = true;
             LearningSession = new Session(SessionFileName);       
         } 
-        
-        /*
-        //refactor
-        if (IsLearning)
-        {
-            _learningAgent = Random.value >= 0.5 ? LearningAgent.Agent1 : LearningAgent.Agent2;
-        }*/
 
     }
 
@@ -193,6 +186,10 @@ public class GameManager : Singleton<GameManager>
             GameState = Random.value > 0.5f ? GamePhase.PlayerTurn : GamePhase.IaTurn;
         else
         {
+            //refactor
+            if (IsLearning)
+                _learningAgent = Random.value >= 0.5 ? LearningAgent.Agent1 : LearningAgent.Agent2;
+            
             if (_learningAgent == LearningAgent.Agent2)
             {
                 Brains[0].IsAgentLearningThisTurn = false;
