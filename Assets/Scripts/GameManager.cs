@@ -56,12 +56,11 @@ public class GameManager : Singleton<GameManager>
         
         GatherReferences();
 
-        //todo refactor
-        // if is not playing the player then is learning
         if (!_isPlayerPlaying)
         {
             IsLearning = true;
-            LearningSession = new Session(0.5f, 0.8f, 0.5f,SessionIterations);
+            _learningAgent = LearningAgent.Agent1;
+            LearningSession = new Session(0.99f, 0.85f, 0.99f,SessionIterations);
         }
         else
         {
@@ -90,7 +89,7 @@ public class GameManager : Singleton<GameManager>
             switch (GameState)
             {
                 case GamePhase.EndGame:
-                    LearningSession.UpdateHyperParamters();
+                    LearningSession.UpdateHyperParameters();
                     IsGameFinished = true;
                     yield return null;
                     break;
@@ -105,7 +104,6 @@ public class GameManager : Singleton<GameManager>
                     while (!_player.HasPlacedAToken)
                     {
                         yield return new WaitForSeconds(WaitingTime);
-                        Debug.Log("Selecciona una ficha por favor.");
                     }
 
                     _player.HasPlacedAToken = false;
@@ -126,9 +124,7 @@ public class GameManager : Singleton<GameManager>
                     yield return null;
                     break;
                 
-                //todo refactor
                 case GamePhase.Learning:
-                    //hacer que haga un entrenamiento si es primero y otro si es segundo
                     LearningTurn();    
                    
                     if (IsGameEnded())
@@ -157,7 +153,7 @@ public class GameManager : Singleton<GameManager>
         }
         
         Debug.Log("Reiniciando el juego");
-        SceneManager.LoadScene(0); //todo load learning session or playing game
+        SceneManager.LoadScene(0);
     }
 
     private void LearningTurn()
@@ -183,12 +179,15 @@ public class GameManager : Singleton<GameManager>
     private void StartGame()
     {
         if (!IsLearning)
+        {
             GameState = Random.value > 0.5f ? GamePhase.PlayerTurn : GamePhase.IaTurn;
+            Brains[0].isFirstAgainstPlayer = GameState != GamePhase.PlayerTurn;
+        }
         else
         {
             //refactor
             if (IsLearning)
-                _learningAgent = Random.value >= 0.5 ? LearningAgent.Agent1 : LearningAgent.Agent2;
+                _learningAgent = _learningAgent == LearningAgent.Agent1 ? LearningAgent.Agent2 : LearningAgent.Agent1;
             
             if (_learningAgent == LearningAgent.Agent2)
             {
@@ -292,19 +291,37 @@ public class GameManager : Singleton<GameManager>
     {
         Cell.CellOwner[] cellOwners = new Cell.CellOwner[9];
         
-        for (var index = 0; index < GameManager.I.Cells.Length; index++)
+        for (var index = 0; index < cells.Length; index++)
         {
-            var cell = GameManager.I.Cells[index];
+            var cell = cells[index];
 
-            if (Brains[0].IsUsingFileData && cell.owner == Cell.CellOwner.Player)
+            if (Brains[0].IsUsingFileData)
             {
-                cellOwners[index] = Cell.CellOwner.Agent2;
-                continue;
+                if (Brains[0].isFirstAgainstPlayer)
+                {
+                    if(cell.owner == Cell.CellOwner.Player)
+                        cell.owner = Cell.CellOwner.Agent2;
+                }
+                else if(!Brains[0].isFirstAgainstPlayer)
+                {
+                    if (cell.owner == Cell.CellOwner.Player)
+                    {
+                        cell.owner = Cell.CellOwner.Agent1;
+                    }
+                        
+                }
             }
             
             cellOwners[index] = cell.owner;
         }
 
         return cellOwners;
+    }
+
+    [ContextMenu("Interrupt Training")]
+    public void InterruptSession()
+    {
+        if(IsLearning)
+            LearningSession.OnSessionCompleted();
     }
 }

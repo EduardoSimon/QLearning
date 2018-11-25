@@ -14,8 +14,8 @@ public class Session {
 
 	//Cada GameState posee una posible acción. Si no se encuentra la clave en el diccionario significa que aun no se ha explorado
 	//Le ponemos como máxima capacidad todos los posibles estados sin discriminar erroneos 3^9 * cada acción posible por estado: 9
-	//todo crear dos diccionarios
-	public Dictionary<GameState, float> QDictionary { get; private set; }
+	public Dictionary<GameState, float> QDictionaryAgent1 { get; private set; }
+	public Dictionary<GameState, float> QDictionaryAgent2 { get; private set; }
 	public float LearningRate { get; private set; }
 	public float DiscountFactor { get; private set; }
 	public double Epsilon { get; private set; }
@@ -31,12 +31,13 @@ public class Session {
 	/// <param name="maxSteps">Max learning steps</param>
 	public Session(float learningRate, float discountFactor, double epsilon, int maxSteps)
 	{
-		QDictionary = new Dictionary<GameState, float>(Mathf.RoundToInt(Mathf.Pow(3,9) * 9), new GameStateComparer());
+		QDictionaryAgent1 = new Dictionary<GameState, float>(Mathf.RoundToInt(Mathf.Pow(3,9) * 9), new GameStateComparer());
+		QDictionaryAgent2 = new Dictionary<GameState, float>(Mathf.RoundToInt(Mathf.Pow(3,9) * 9), new GameStateComparer());
 		LearningRate = Mathf.Clamp01(learningRate);
 		DiscountFactor = Mathf.Clamp01(discountFactor);
 		Epsilon = epsilon;
 		Steps = 0;
-		MaxSteps = maxSteps;
+		MaxSteps = maxSteps;	
 		
 		Assert.AreNotEqual(maxSteps,0);
 	}
@@ -46,11 +47,16 @@ public class Session {
 	/// </summary>
 	public Session(string sessionFileName)
 	{
-		QDictionary = SessionIo.LoadSessionFile(sessionFileName);  
+		var dics = SessionIo.LoadSessionFile(sessionFileName);
+		QDictionaryAgent1 = dics[0];
+		QDictionaryAgent2 = dics[1];
 	}
 
 	public int Reward(Cell.CellOwner owner)
-	{		
+	{
+		if (!GameManager.I.IsGameEnded())
+			return 0;
+		
 		if (GameManager.I.Winner == Cell.CellOwner.Agent1 && owner == Cell.CellOwner.Agent1 ||
 		    GameManager.I.Winner == Cell.CellOwner.Agent2 && owner == Cell.CellOwner.Agent2)
 			return 1;
@@ -63,21 +69,31 @@ public class Session {
 		return 0;
 	}
 
-	private float CheckBestQValueAtGameState(Cell.CellOwner[] owners)
+	private float CheckBestQValueAtGameState(Cell.CellOwner[] owners, Cell.CellOwner owner)
 	{
-		float tempMaxQ = 0;
+		float tempMaxQ1 = 0;
+		float tempMaxQ2 = 0;
 		
 		for (int i = 0; i < 9; i++)
 		{
 			GameState gameState = new GameState(owners,i);
-			
-			if(QDictionary.ContainsKey(gameState))
-				if (QDictionary[gameState] > tempMaxQ)
-					tempMaxQ = QDictionary[gameState];
-			
+
+			if (owner == Cell.CellOwner.Agent1)
+			{
+				if(QDictionaryAgent1.ContainsKey(gameState))
+					if (QDictionaryAgent1[gameState] > tempMaxQ1)
+						tempMaxQ1 = QDictionaryAgent1[gameState];				
+			}
+			else
+			{
+				if(QDictionaryAgent2.ContainsKey(gameState))
+					if (QDictionaryAgent2[gameState] > tempMaxQ2)
+						tempMaxQ2 = QDictionaryAgent2[gameState];
+			}
+				
 		}
-		
-		return tempMaxQ;
+
+		return owner == Cell.CellOwner.Agent1 ? tempMaxQ1 : tempMaxQ2;
 	}
 
 	private bool IsValidAction(GameState gameState)
@@ -85,37 +101,71 @@ public class Session {
 		return gameState.Cells[gameState.IndexAction] == Cell.CellOwner.None;
 	}
 
-	public GameState CheckBestActionAtGameState(Cell.CellOwner[] owners)
+	public GameState CheckBestActionAtGameState(Cell.CellOwner[] owners, Cell.CellOwner owner)
 	{
 		GameState tempBestAction = null;
 		float tempMaxQ = int.MinValue;
 		List<GameState> similarGameStates = new List<GameState>();
-		
-		for (int i = 0; i < 9; i++)
-		{
-			GameState gameState = new GameState(owners,i);
 
-			if (IsValidAction(gameState))
+		if (owner == Cell.CellOwner.Agent1)
+		{
+			for (int i = 0; i < 9; i++)
 			{
-				if (QDictionary.ContainsKey(gameState))
+				GameState gameState = new GameState(owners, i);
+
+				if (IsValidAction(gameState))
 				{
-					if(QDictionary[gameState] == 0)
+
+					if (QDictionaryAgent1.ContainsKey(gameState))
+					{
+						if (QDictionaryAgent1[gameState] == 0)
+						{
+							similarGameStates.Add(gameState);
+						}
+						else if (QDictionaryAgent1[gameState] > tempMaxQ)
+						{
+							tempMaxQ = QDictionaryAgent1[gameState];
+							tempBestAction = gameState;
+						}
+					}
+					else
 					{
 						similarGameStates.Add(gameState);
-					}
-					else if (QDictionary[gameState] > tempMaxQ)
-					{
-						tempMaxQ = QDictionary[gameState];
-						tempBestAction = gameState;
+						QDictionaryAgent1[gameState] = 0;
 					}
 				}
-				else
-				{
-					similarGameStates.Add(gameState);
-					QDictionary[gameState] = 0;
-				}
+
 			}
-			
+		}
+		else
+		{
+			for (int i = 0; i < 9; i++)
+			{
+				GameState gameState = new GameState(owners,i);
+	
+				if (IsValidAction(gameState))
+				{
+					
+					if (QDictionaryAgent2.ContainsKey(gameState))
+					{
+						if(QDictionaryAgent2[gameState] == 0)
+						{
+							similarGameStates.Add(gameState);
+						}
+						else if (QDictionaryAgent2[gameState] > tempMaxQ)
+						{
+							tempMaxQ = QDictionaryAgent2[gameState];
+							tempBestAction = gameState;
+						}
+					}
+					else
+					{
+						similarGameStates.Add(gameState);
+						QDictionaryAgent2[gameState] = 0;
+					}
+				}
+				
+			}
 		}
 
 		if (tempBestAction == null)
@@ -128,13 +178,16 @@ public class Session {
 		return tempBestAction;
 	}
 
-	public void UpdateHyperParamters()
+	public void UpdateHyperParameters()
 	{
-		//todo hacer decrease de learning rate, epsilon de manera mas eficiente. Y hacerlo visualizar
-		/*if(LearningRate >= 0.01f) 
-			LearningRate -= 0.00001f;
+		//conforme esta esto si iteramos unas 100k el agente 1 va genial.
+		//todo entrenar 200k veces haciendo que baje poco el learning rate y el epsilon.
+		//todo entrenar 200k veces bajando poco el learning rate y bajando bien el epsilon
+		
+		if(LearningRate >= 0.1f) 
+			LearningRate -= 0.000001f;
 		if(Epsilon >= 0.1f) 
-			Epsilon -= 0.0001f;*/
+			Epsilon -= 0.000001f;
 		Steps += 1;
 
 		if (Steps >= MaxSteps && MaxSteps != 0)
@@ -147,21 +200,35 @@ public class Session {
 		
 		int reward = GameManager.I.LearningSession.Reward(owner);
 
-
-		if (!QDictionary.ContainsKey(observedPlay))
+		if (owner == Cell.CellOwner.Agent1)
 		{
-			QDictionary[observedPlay] = 0;
+			if (!QDictionaryAgent1.ContainsKey(observedPlay))
+			{
+				QDictionaryAgent1[observedPlay] = 0;
+			}
+				
+			float newQ = QDictionaryAgent1[observedPlay]
+						 + LearningRate * (reward + DiscountFactor * CheckBestQValueAtGameState(GameManager.I.GetCellsOwner(GameManager.I.Cells),owner)  - QDictionaryAgent1[observedPlay]);
+	
+			QDictionaryAgent1[observedPlay] = newQ;
 		}
-			
-		float newQ = QDictionary[observedPlay]
-		             + LearningRate * (reward + DiscountFactor * CheckBestQValueAtGameState(GameManager.I.GetCellsOwner(GameManager.I.Cells))  - QDictionary[observedPlay]);
-
-		QDictionary[observedPlay] = newQ;
+		else
+		{
+			if (!QDictionaryAgent2.ContainsKey(observedPlay))
+			{
+				QDictionaryAgent2[observedPlay] = 0;
+			}
+				
+			float newQ = QDictionaryAgent2[observedPlay]
+			             + LearningRate * (reward + DiscountFactor * CheckBestQValueAtGameState(GameManager.I.GetCellsOwner(GameManager.I.Cells),owner)  - QDictionaryAgent2[observedPlay]);
+	
+			QDictionaryAgent2[observedPlay] = newQ;
+		}
 	}
 
-	private void OnSessionCompleted()
+	public void OnSessionCompleted()
 	{
-		SessionIo.SaveSessionFile("session_" + MaxSteps,QDictionary);
+		SessionIo.SaveSessionFile("session_" + MaxSteps,QDictionaryAgent1,QDictionaryAgent2);
 		Application.Quit();
 		
 		#if UNITY_EDITOR

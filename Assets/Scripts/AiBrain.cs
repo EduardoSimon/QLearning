@@ -10,6 +10,7 @@ public class AiBrain : MonoBehaviour
 	private int _aiBrainId;
 	public bool IsAgentLearningThisTurn;
 	public bool IsUsingFileData;
+	public bool isFirstAgainstPlayer;
 	public GameState LastPlay { get; private set; }
 
 	private void Start()
@@ -17,19 +18,18 @@ public class AiBrain : MonoBehaviour
 		_aiBrainId = Array.IndexOf(GameManager.I.Brains, this);
 	}
 
-	//todo possibly refactor time
 	public void ProcessAgentPlay()
 	{
 		if (IsUsingFileData)
 		{
-			GameState play = GameManager.I.LearningSession.CheckBestActionAtGameState(GameManager.I.GetCellsOwner(GameManager.I.Cells));
-			GameManager.I.Cells[play.IndexAction].owner = Cell.CellOwner.Agent1;
+			GameState play = GameManager.I.LearningSession.CheckBestActionAtGameState(GameManager.I.GetCellsOwner(GameManager.I.Cells),isFirstAgainstPlayer ? Cell.CellOwner.Agent1 : Cell.CellOwner.Agent2);
+			GameManager.I.Cells[play.IndexAction].owner = isFirstAgainstPlayer ? Cell.CellOwner.Agent1 : Cell.CellOwner.Agent2;
 			GameManager.I.Cells[play.IndexAction].UpdateColor();
 		}
 		else if(IsAgentLearningThisTurn)
 		{
 			LastPlay = ObserveState();
-			GameManager.I.Cells[LastPlay.IndexAction].owner =  _aiBrainId == 0 ? Cell.CellOwner.Agent1 : Cell.CellOwner.Agent2; //todo cambiar esto
+			GameManager.I.Cells[LastPlay.IndexAction].owner =  _aiBrainId == 0 ? Cell.CellOwner.Agent1 : Cell.CellOwner.Agent2;
 			GameManager.I.Cells[LastPlay.IndexAction].UpdateColor();
 		}
 		else if (!IsAgentLearningThisTurn)
@@ -55,7 +55,7 @@ public class AiBrain : MonoBehaviour
 			return new GameState(GameManager.I.GetCellsOwner(GameManager.I.Cells),action);
 		}
 		
-		return GameManager.I.LearningSession.CheckBestActionAtGameState(GameManager.I.GetCellsOwner(GameManager.I.Cells));
+		return GameManager.I.LearningSession.CheckBestActionAtGameState(GameManager.I.GetCellsOwner(GameManager.I.Cells),_aiBrainId == 0 ? Cell.CellOwner.Agent1 : Cell.CellOwner.Agent2);
 	}
 	
 	private void SelectRandomCell()
