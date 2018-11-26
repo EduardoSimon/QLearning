@@ -184,9 +184,9 @@ public class Session {
 		//todo entrenar 200k veces haciendo que baje poco el learning rate y el epsilon.
 		//todo entrenar 200k veces bajando poco el learning rate y bajando bien el epsilon
 		
-		if(LearningRate >= 0.1f) 
+		if(LearningRate >= 0.3f) 
 			LearningRate -= 0.000001f;
-		if(Epsilon >= 0.1f) 
+		if(Epsilon >= 0.3f) 
 			Epsilon -= 0.000001f;
 		Steps += 1;
 
