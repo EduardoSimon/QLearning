@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
+<<<<<<< Updated upstream
     <list default="true" id="e786a666-66cd-42ab-b8c6-3eca1246c698" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.QLearning/.idea/contentModel.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.QLearning/.idea/contentModel.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/Session.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Session.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ProjectSettings/ProjectVersion.txt" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/ProjectVersion.txt" afterDir="false" />
     </list>
+=======
+    <list default="true" id="e786a666-66cd-42ab-b8c6-3eca1246c698" name="Default Changelist" comment="" />
+>>>>>>> Stashed changes
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -22,29 +26,32 @@
           <entry key="project.open.time.12" value="2" />
           <entry key="project.open.time.13" value="2" />
           <entry key="project.open.time.17" value="2" />
+          <entry key="project.open.time.18" value="1" />
           <entry key="project.open.time.7" value="1" />
-          <entry key="project.opened" value="14" />
+          <entry key="project.opened" value="15" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="cs" value="16861" />
+          <entry key="txt" value="1" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="C#" value="16861" />
+          <entry key="PLAIN_TEXT" value="1" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="cs" value="35" />
+          <entry key="cs" value="36" />
           <entry key="txt" value="12" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="C#" value="35" />
+          <entry key="C#" value="36" />
           <entry key="PLAIN_TEXT" value="12" />
         </counts>
       </usages-collector>
@@ -89,8 +96,13 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Assets/Scripts/Session.cs">
           <provider selected="true" editor-type-id="text-editor">
+<<<<<<< Updated upstream
             <state relative-caret-position="3580">
               <caret line="188" column="25" selection-start-line="188" selection-start-column="25" selection-end-line="188" selection-end-column="25" />
+=======
+            <state relative-caret-position="760">
+              <caret line="49" column="16" selection-start-line="49" selection-start-column="16" selection-end-line="49" selection-end-column="16" />
+>>>>>>> Stashed changes
               <folding>
                 <marker date="1543183102649" expanded="false" signature="6:240" ph="..." />
                 <marker date="1543183102649" expanded="true" signature="285:6727" ph="{...}" />
@@ -134,16 +146,48 @@
           </provider>
         </entry>
       </file>
+<<<<<<< Updated upstream
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Assets/session_200000.txt">
           <provider selected="true" editor-type-id="text-editor" />
+=======
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/Assets/session_100000.txt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="228">
+              <caret line="12" column="18" selection-start-line="12" selection-end-line="12" selection-end-column="18" />
+            </state>
+          </provider>
+>>>>>>> Stashed changes
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Assets/Scripts/AiBrain.cs">
           <provider selected="true" editor-type-id="text-editor">
+<<<<<<< Updated upstream
             <state relative-caret-position="400">
               <caret line="20" selection-start-line="20" selection-end-line="20" />
+=======
+            <state relative-caret-position="266">
+              <caret line="19" selection-start-line="19" selection-end-line="19" />
+              <folding>
+                <marker date="1543169900065" expanded="false" signature="6:146" ph="..." />
+                <marker date="1543169900065" expanded="true" signature="184:2382" ph="{...}" />
+                <marker date="1543169900065" expanded="true" signature="386:450" ph="{...}" />
+                <marker date="1543169900065" expanded="true" signature="483:1213" ph="{...}" />
+                <marker date="1543169900065" expanded="true" signature="509:889" ph="{...}" />
+                <marker date="1543169900065" expanded="true" signature="924:1141" ph="{...}" />
+                <marker date="1543169900065" expanded="true" signature="1178:1209" ph="{...}" />
+                <marker date="1543169900065" expanded="true" signature="1248:1765" ph="{...}" />
+                <marker date="1543169900065" expanded="true" signature="1336:1578" ph="{...}" />
+                <marker date="1543169900065" expanded="true" signature="1445:1488" ph="{...}" />
+                <marker date="1543169900065" expanded="true" signature="1800:2215" ph="{...}" />
+                <marker date="1543169900065" expanded="true" signature="1939:2055" ph="{...}" />
+                <marker date="1543169900065" expanded="true" signature="2029:2051" ph="{...}" />
+                <marker date="1543169900065" expanded="true" signature="2245:2379" ph="{...}" />
+                <marker date="1543169900065" expanded="true" signature="2292:2359" ph="{...}" />
+              </folding>
+>>>>>>> Stashed changes
             </state>
           </provider>
         </entry>
@@ -153,6 +197,50 @@
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="3020">
               <caret line="151" column="13" selection-start-line="151" selection-start-column="13" selection-end-line="151" selection-end-column="13" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Assets/Scripts/SessionIO.cs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="190">
+              <caret line="15" column="36" selection-start-line="15" selection-start-column="31" selection-end-line="15" selection-end-column="36" />
+              <folding>
+                <marker date="1542972912074" expanded="false" signature="6:139" ph="..." />
+                <marker date="1542972912074" expanded="true" signature="163:3563" ph="{...}" />
+                <marker date="1542972912074" expanded="true" signature="308:784" ph="{...}" />
+                <marker date="1542972912074" expanded="true" signature="418:778" ph="{...}" />
+                <marker date="1542972912074" expanded="true" signature="481:576" ph="{...}" />
+                <marker date="1542972912074" expanded="true" signature="673:768" ph="{...}" />
+                <marker date="1542972912074" expanded="true" signature="870:3559" ph="{...}" />
+                <marker date="1542972912074" expanded="true" signature="1203:3403" ph="{...}" />
+                <marker date="1542972912074" expanded="true" signature="1345:2291" ph="{...}" />
+                <marker date="1542972912074" expanded="true" signature="1589:2120" ph="{...}" />
+                <marker date="1542972912074" expanded="true" signature="2433:3393" ph="{...}" />
+                <marker date="1542972912074" expanded="true" signature="2691:3222" ph="{...}" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Assets/Scripts/GameState.cs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="361">
+              <caret line="21" column="9" lean-forward="true" selection-start-line="21" selection-start-column="9" selection-end-line="21" selection-end-column="9" />
+              <folding>
+                <marker date="1542875061658" expanded="false" signature="6:78" ph="..." />
+                <marker date="1542875061658" expanded="true" signature="124:686" ph="{...}" />
+                <marker date="1542875061658" expanded="true" signature="252:332" ph="{...}" />
+                <marker date="1542875061658" expanded="true" signature="371:684" ph="{...}" />
+                <marker date="1542875061658" expanded="true" signature="470:566" ph="{...}" />
+                <marker date="1542875061658" expanded="true" signature="750:1412" ph="{...}" />
+                <marker date="1542875061658" expanded="true" signature="801:1095" ph="{...}" />
+                <marker date="1542875061658" expanded="true" signature="847:968" ph="{...}" />
+                <marker date="1542875061658" expanded="true" signature="1138:1410" ph="{...}" />
+                <marker date="1542875061658" expanded="true" signature="1234:1340" ph="{...}" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -197,7 +285,11 @@
         <option value="$PROJECT_DIR$/Assets/Scripts/SessionIO.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/AiBrain.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/GameManager.cs" />
+<<<<<<< Updated upstream
         <option value="$PROJECT_DIR$/Assets/Scripts/Session.cs" />
+=======
+        <option value="$PROJECT_DIR$/Assets/session_100000.txt" />
+>>>>>>> Stashed changes
       </list>
     </option>
   </component>
@@ -220,9 +312,12 @@
     </navigator>
     <panes>
       <pane id="FileSystemExplorer" />
+<<<<<<< Updated upstream
       <pane id="SolutionExplorer">
         <option name="show-all-files" value="false" />
       </pane>
+=======
+>>>>>>> Stashed changes
       <pane id="UnityExplorer">
         <subPane>
           <expand>
@@ -240,12 +335,18 @@
         </subPane>
         <option name="show-hidden-items" value="false" />
       </pane>
+<<<<<<< Updated upstream
+=======
+      <pane id="SolutionExplorer">
+        <option name="show-all-files" value="false" />
+      </pane>
+>>>>>>> Stashed changes
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="Rider.DefaultBreakpoints.AreToggled" value="true" />
     <property name="Rider.ProjectViewActivator.IsNotFirstRun" value="true" />
-    <property name="SearchEverywhereHistoryKey" value="gamema&#9;FILE&#9;file://D:/Unity/QLearning/Assets/Scripts/GameManager.cs&#10;sess&#9;FILE&#9;file://D:/Unity/QLearning/Assets/Scripts/Session.cs&#10;session&#9;FILE&#9;file://D:/Unity/QLearning/Assets/Scripts/SessionIO.cs&#10;aibrain&#9;FILE&#9;file://D:/Unity/QLearning/Assets/Scripts/AiBrain.cs" />
+    <property name="SearchEverywhereHistoryKey" value="games&#9;FILE&#9;file://D:/Unity/QLearning/Assets/Scripts/GameState.cs&#10;gamema&#9;FILE&#9;file://D:/Unity/QLearning/Assets/Scripts/GameManager.cs&#10;sess&#9;FILE&#9;file://D:/Unity/QLearning/Assets/Scripts/Session.cs&#10;session&#9;FILE&#9;file://D:/Unity/QLearning/Assets/Scripts/SessionIO.cs&#10;aibrain&#9;FILE&#9;file://D:/Unity/QLearning/Assets/Scripts/AiBrain.cs" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
   </component>
@@ -307,12 +408,20 @@
       <workItem from="1542967606259" duration="6251000" />
       <workItem from="1542994370702" duration="3291000" />
       <workItem from="1543044769901" duration="4616000" />
+<<<<<<< Updated upstream
       <workItem from="1543183054576" duration="1021000" />
+=======
+      <workItem from="1543261172924" duration="296000" />
+>>>>>>> Stashed changes
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
+<<<<<<< Updated upstream
     <option name="totallyTimeSpent" value="112918000" />
+=======
+    <option name="totallyTimeSpent" value="112193000" />
+>>>>>>> Stashed changes
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -324,9 +433,16 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
+<<<<<<< Updated upstream
     <frame x="-8" y="-8" width="2576" height="1416" extended-state="6" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49019608" visible="true" weight="0.29689986" />
+=======
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <editor active="true" />
+    <layout>
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49019608" visible="true" weight="0.29699248" />
+>>>>>>> Stashed changes
       <window_info id="Structure" order="1" sideWeight="0.50884086" side_tool="true" weight="0.28195488" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -335,7 +451,11 @@
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4293722" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+<<<<<<< Updated upstream
       <window_info anchor="bottom" id="TODO" order="6" weight="0.32839313" />
+=======
+      <window_info anchor="bottom" id="TODO" order="6" visible="true" weight="0.32847533" />
+>>>>>>> Stashed changes
       <window_info anchor="bottom" id="NuGet" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Docker" order="8" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="9" show_stripe_button="false" />
@@ -492,6 +612,7 @@
         </state>
       </provider>
     </entry>
+<<<<<<< Updated upstream
     <entry file="file://$PROJECT_DIR$/Assets/session_70.txt" />
     <entry file="file://$PROJECT_DIR$/Assets/session_15000.txt" />
     <entry file="file://$PROJECT_DIR$/Assets/Scripts/GameState.cs">
@@ -500,11 +621,19 @@
           <caret line="14" column="4" selection-start-line="14" selection-start-column="4" selection-end-line="14" selection-end-column="4" />
         </state>
       </provider>
+=======
+    <entry file="file://$PROJECT_DIR$/Assets/session_70.txt">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/session_15000.txt">
+      <provider selected="true" editor-type-id="text-editor" />
+>>>>>>> Stashed changes
     </entry>
     <entry file="file://$PROJECT_DIR$/Assets/Scripts/Singleton.cs">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="646">
           <caret line="35" column="24" selection-start-line="35" selection-start-column="24" selection-end-line="35" selection-end-column="24" />
+<<<<<<< Updated upstream
         </state>
       </provider>
     </entry>
@@ -536,6 +665,94 @@
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/Assets/Scripts/Session.cs">
+=======
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/session_60000.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-66519">
+          <caret line="162" column="29" lean-forward="true" selection-start-line="162" selection-start-column="29" selection-end-line="162" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/session_120000.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-75012" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Session.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="760">
+          <caret line="49" column="16" selection-start-line="49" selection-start-column="16" selection-end-line="49" selection-end-column="16" />
+          <folding>
+            <marker date="1543169900327" expanded="false" signature="6:240" ph="..." />
+            <marker date="1543169900327" expanded="true" signature="285:6727" ph="{...}" />
+            <marker date="1543169900327" expanded="true" signature="289:542" ph="/* Cada GameState posee una posible acción. Si no se encuentra la clave en el diccionario significa que aun no se ... */" />
+            <marker date="1543169900327" expanded="true" signature="927:1384" ph="/// Use this constructor when you want to start a Leaning Session ... " />
+            <marker date="1543169900327" expanded="true" signature="1472:1907" ph="{...}" />
+            <marker date="1543169900327" expanded="true" signature="1910:2002" ph="/// Use this constructor when you want to read a session file ... " />
+            <marker date="1543169900327" expanded="true" signature="2042:2167" ph="{...}" />
+            <marker date="1543169900327" expanded="true" signature="2209:2679" ph="{...}" />
+            <marker date="1543169900327" expanded="true" signature="2769:3351" ph="{...}" />
+            <marker date="1543169900327" expanded="true" signature="2851:3282" ph="{...}" />
+            <marker date="1543169900327" expanded="true" signature="2945:3107" ph="{...}" />
+            <marker date="1543169900327" expanded="true" signature="3115:3273" ph="{...}" />
+            <marker date="1543169900327" expanded="true" signature="3401:3479" ph="{...}" />
+            <marker date="1543169900327" expanded="true" signature="3572:5093" ph="{...}" />
+            <marker date="1543169900327" expanded="true" signature="3743:4319" ph="{...}" />
+            <marker date="1543169900327" expanded="true" signature="3778:4315" ph="{...}" />
+            <marker date="1543169900327" expanded="true" signature="3870:4309" ph="{...}" />
+            <marker date="1543169900327" expanded="true" signature="3928:4199" ph="{...}" />
+            <marker date="1543169900327" expanded="true" signature="3980:4037" ph="{...}" />
+            <marker date="1543169900327" expanded="true" signature="4093:4192" ph="{...}" />
+            <marker date="1543169900327" expanded="true" signature="4209:4303" ph="{...}" />
+            <marker date="1543169900327" expanded="true" signature="4326:4910" ph="{...}" />
+            <marker date="1543169900327" expanded="true" signature="4361:4906" ph="{...}" />
+            <marker date="1543169900327" expanded="true" signature="4453:4896" ph="{...}" />
+            <marker date="1543169900327" expanded="true" signature="4516:4786" ph="{...}" />
+            <marker date="1543169900327" expanded="true" signature="4567:4624" ph="{...}" />
+            <marker date="1543169900327" expanded="true" signature="4680:4779" ph="{...}" />
+            <marker date="1543169900327" expanded="true" signature="4796:4890" ph="{...}" />
+            <marker date="1543169900327" expanded="true" signature="4941:5064" ph="{...}" />
+            <marker date="1543169900327" expanded="true" signature="5131:5565" ph="{...}" />
+            <marker date="1543169900327" expanded="true" signature="5137:5370" ph="/* conforme esta esto si iteramos unas 100k el agente 1 va genial. ... */" />
+            <marker date="1543169900327" expanded="true" signature="5639:6525" ph="{...}" />
+            <marker date="1543169900327" expanded="true" signature="5744:6125" ph="{...}" />
+            <marker date="1543169900327" expanded="true" signature="5801:5852" ph="{...}" />
+            <marker date="1543169900327" expanded="true" signature="6132:6522" ph="{...}" />
+            <marker date="1543169900327" expanded="true" signature="6189:6240" ph="{...}" />
+            <marker date="1543169900327" expanded="true" signature="6560:6725" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/AiBrain.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="266">
+          <caret line="19" selection-start-line="19" selection-end-line="19" />
+          <folding>
+            <marker date="1543169900065" expanded="false" signature="6:146" ph="..." />
+            <marker date="1543169900065" expanded="true" signature="184:2382" ph="{...}" />
+            <marker date="1543169900065" expanded="true" signature="386:450" ph="{...}" />
+            <marker date="1543169900065" expanded="true" signature="483:1213" ph="{...}" />
+            <marker date="1543169900065" expanded="true" signature="509:889" ph="{...}" />
+            <marker date="1543169900065" expanded="true" signature="924:1141" ph="{...}" />
+            <marker date="1543169900065" expanded="true" signature="1178:1209" ph="{...}" />
+            <marker date="1543169900065" expanded="true" signature="1248:1765" ph="{...}" />
+            <marker date="1543169900065" expanded="true" signature="1336:1578" ph="{...}" />
+            <marker date="1543169900065" expanded="true" signature="1445:1488" ph="{...}" />
+            <marker date="1543169900065" expanded="true" signature="1800:2215" ph="{...}" />
+            <marker date="1543169900065" expanded="true" signature="1939:2055" ph="{...}" />
+            <marker date="1543169900065" expanded="true" signature="2029:2051" ph="{...}" />
+            <marker date="1543169900065" expanded="true" signature="2245:2379" ph="{...}" />
+            <marker date="1543169900065" expanded="true" signature="2292:2359" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/GameManager.cs">
+>>>>>>> Stashed changes
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="3580">
           <caret line="188" column="25" selection-start-line="188" selection-start-column="25" selection-end-line="188" selection-end-column="25" />
@@ -578,6 +795,53 @@
             <marker date="1543183102649" expanded="true" signature="6189:6240" ph="{...}" />
             <marker date="1543183102649" expanded="true" signature="6560:6725" ph="{...}" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/SessionIO.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="190">
+          <caret line="15" column="36" selection-start-line="15" selection-start-column="31" selection-end-line="15" selection-end-column="36" />
+          <folding>
+            <marker date="1542972912074" expanded="false" signature="6:139" ph="..." />
+            <marker date="1542972912074" expanded="true" signature="163:3563" ph="{...}" />
+            <marker date="1542972912074" expanded="true" signature="308:784" ph="{...}" />
+            <marker date="1542972912074" expanded="true" signature="418:778" ph="{...}" />
+            <marker date="1542972912074" expanded="true" signature="481:576" ph="{...}" />
+            <marker date="1542972912074" expanded="true" signature="673:768" ph="{...}" />
+            <marker date="1542972912074" expanded="true" signature="870:3559" ph="{...}" />
+            <marker date="1542972912074" expanded="true" signature="1203:3403" ph="{...}" />
+            <marker date="1542972912074" expanded="true" signature="1345:2291" ph="{...}" />
+            <marker date="1542972912074" expanded="true" signature="1589:2120" ph="{...}" />
+            <marker date="1542972912074" expanded="true" signature="2433:3393" ph="{...}" />
+            <marker date="1542972912074" expanded="true" signature="2691:3222" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/GameState.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="361">
+          <caret line="21" column="9" lean-forward="true" selection-start-line="21" selection-start-column="9" selection-end-line="21" selection-end-column="9" />
+          <folding>
+            <marker date="1542875061658" expanded="false" signature="6:78" ph="..." />
+            <marker date="1542875061658" expanded="true" signature="124:686" ph="{...}" />
+            <marker date="1542875061658" expanded="true" signature="252:332" ph="{...}" />
+            <marker date="1542875061658" expanded="true" signature="371:684" ph="{...}" />
+            <marker date="1542875061658" expanded="true" signature="470:566" ph="{...}" />
+            <marker date="1542875061658" expanded="true" signature="750:1412" ph="{...}" />
+            <marker date="1542875061658" expanded="true" signature="801:1095" ph="{...}" />
+            <marker date="1542875061658" expanded="true" signature="847:968" ph="{...}" />
+            <marker date="1542875061658" expanded="true" signature="1138:1410" ph="{...}" />
+            <marker date="1542875061658" expanded="true" signature="1234:1340" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/session_100000.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="228">
+          <caret line="12" column="18" selection-start-line="12" selection-end-line="12" selection-end-column="18" />
         </state>
       </provider>
     </entry>

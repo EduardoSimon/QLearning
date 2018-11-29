@@ -60,7 +60,7 @@ public class GameManager : Singleton<GameManager>
         {
             IsLearning = true;
             _learningAgent = LearningAgent.Agent1;
-            LearningSession = new Session(0.99f, 0.85f, 0.99f,SessionIterations);
+            LearningSession = new Session(0.9f, 0.99f, 0.7f,SessionIterations);
         }
         else
         {
@@ -187,7 +187,8 @@ public class GameManager : Singleton<GameManager>
         {
             //refactor
             if (IsLearning)
-                _learningAgent = _learningAgent == LearningAgent.Agent1 ? LearningAgent.Agent2 : LearningAgent.Agent1;
+                _learningAgent = LearningAgent.Agent1;
+                //_learningAgent = _learningAgent == LearningAgent.Agent1 ? LearningAgent.Agent2 : LearningAgent.Agent1;
             
             if (_learningAgent == LearningAgent.Agent2)
             {

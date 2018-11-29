@@ -70,6 +70,6 @@ MonoBehaviour:
   WaitingTime: 0
   IsLearning: 0
   SessionFileName: session_100000
-  SessionIterations: 120000
+  SessionIterations: 100000
   _isPlayerPlaying: 0
   _learningAgent: 0
